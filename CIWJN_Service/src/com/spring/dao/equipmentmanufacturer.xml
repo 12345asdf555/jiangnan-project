@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.dao.EquipmentManufacturerMapper">
+
+	<resultMap id="mMap" type="com.spring.model.EquipmentManufacturer">
+		<id column="fid" property="id" />
+		<result property="name" column="fname" />		
+		<result property="type" column="ftype" />
+		<result property="typeValue" column="ftype_value" />
+		<result property="typeid" column="typeid" />
+		<result property="creator" column="fcreator" />
+		<result property="modifier" column="fmodifier" />
+	</resultMap>
+	
+	<select id="getmanuAll" resultMap="mMap">
+		SELECT m.fid, fname, d.fvaluename ftype,ftype typeid, ftype_value FROM tb_equipment_manufacturer m INNER JOIN tb_dictionary d on d.fvalue = m.ftype where d.ftypeid=4
+		<if test="str!=null and str!=''">
+			and ${str}
+		</if>
+		ORDER BY fid
+	</select>
+	
+	<select id="getManuidByValue" resultType="java.math.BigInteger">
+		SELECT m.fid FROM tb_equipment_manufacturer m INNER JOIN tb_dictionary d on d.fvalue = m.ftype WHERE fname =#{name} and d.fvaluename=#{type}
+	</select>
+	
+	<select id="getManuCount" resultType="java.lang.Integer">
+		SELECT count(*) FROM tb_equipment_manufacturer WHERE fname=#{name} and ftype=#{type}
+	</select>
+	
+	<select id="getManuById" resultMap="mMap">
+		SELECT m.fid, fname,d.fvaluename ftype,ftype typeid, ftype_value,m.fcreator FROM tb_equipment_manufacturer m INNER JOIN tb_dictionary d on d.fvalue = m.ftype where d.ftypeid=4 and m.fid = #{id}
+	</select>
+	
+	<insert id="addManu" parameterType="com.spring.model.EquipmentManufacturer" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_equipment_manufacturer(fname, ftype, ftype_value, fcreator, fcreatetime) VALUES (#{name},#{type},#{typeValue},#{creator},now())
+ 	</insert>
+	
+	<update id="editManu" parameterType="com.spring.model.EquipmentManufacturer">
+		UPDATE tb_equipment_manufacturer SET fname=#{name},ftype=#{type},ftype_value=#{typeValue},fmodifier=#{modifier},fupdatetime=now() WHERE fid=#{id}
+	</update>
+	
+	<delete id="deleteManu" parameterType="java.math.BigInteger">
+		DELETE FROM tb_equipment_manufacturer WHERE fid=#{id}
+	</delete>
+</mapper>

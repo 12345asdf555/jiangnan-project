@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.spring.dao.WeldMapper">	
+	<insert id="AddWeld" parameterType="Weld" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_welder(fwelder_no,fname,fItemID, fcreator, fcreatetime) values(#{fwelder_no},#{fname},#{fitemid},#{creator},now());
+	</insert>
+	
+	<update id="UpdateWeld" parameterType="Weld">
+		update tb_welder set fwelder_no=#{fwelder_no},fname=#{fname},fItemID=#{fitemid},fmodifier=#{modifier},fupdatetime=now() where fwelder_no=#{fwelder_no} and fItemID=#{fitemid};
+	</update>
+	
+	<insert id="AddJunction" parameterType="Weld"  useGeneratedKeys="true" keyProperty="id">
+		insert into tb_welded_junction(fwelded_junction_no,fserial_no,fpipeline_no,froom_no,funit,farea,fsystems,fchildren,fexternal_diameter,fwall_thickness,fdyne,fspecification,fmax_electricity,fmin_electricity,felectricity_unit,fmax_valtage,fmin_valtage,fvaltage_unit,fitemId,Fmaterial,fnextExternal_diameter,fnextwall_thickness,Fnext_material,fstart_time,fend_time, fcreator, fcreatetime) values(#{fwjn},#{fsn},#{fpn},#{frn},#{funit},#{farea},#{fsystems},#{fchildren},#{fed},#{fwt},#{fdyne},#{fspecification},#{fmaxele},#{fminele},#{fele_unit},#{fmaxval},#{fminval},#{fval_unit},#{fitemid},#{fmaterial},#{fnd},#{fnt},#{fnm},#{fstart_time},#{fend_time},#{creator},now());
+	</insert>
+	
+	<update id="UpdateJunction" parameterType="Weld">
+		update tb_welded_junction set fwelded_junction_no=#{fwjn},fserial_no=#{fsn},fpipeline_no=#{fpn},froom_no=#{frn},funit=#{funit},farea=#{farea},fsystems=#{fsystems},fchildren=#{fchildren},fexternal_diameter=#{fed},fwall_thickness=#{fwt},fdyne=#{fdyne},fspecification=#{fspecification},fmax_electricity=#{fmaxele},fmin_electricity=#{fminele},felectricity_unit=#{fele_unit},fmax_valtage=#{fmaxval},fmin_valtage=#{fminval},fvaltage_unit=#{fval_unit},fitemId=#{fitemid},Fmaterial=#{fmaterial},fnextExternal_diameter=#{fnd},fnextwall_thickness=#{fnt},Fnext_material=#{fnm},fstart_time=#{fstart_time},fend_time=#{fend_time},fmodifier=#{modifier},fupdatetime=now() where fwelded_junction_no=#{fwjn} and fitemId=#{fitemid};
+	</update>
+	
+	<delete id="DeleteJunction" parameterType="BigInteger">
+		delete from tb_welded_junction where fwelded_junction_no=#{fwjn} and fItemID=#{fitemid};
+	</delete>
+	
+	<select id="FindIns_Id" parameterType="String" resultType="BigInteger">
+		select fid fid from tb_insframework where fname=#{fname}
+	</select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.dao.FaultMapper">
+
+	<resultMap id="faultMap" type="com.spring.model.Fault">
+		<id property="id" column="fid"></id> 
+        <result property="code" column="fcode"></result>  
+        <result property="type" column="ftype"></result>  
+        <result property="desc" column="fdesc"></result>  
+		<result property="creator" column="fcreator" />
+		<result property="modifier" column="fmodifier" />
+		<result property="valuename" column="fvaluename" />
+	</resultMap>
+	
+	<select id="getFaultAll" resultMap="faultMap">
+		SELECT f.fid,fcode,fdesc,ftype,d.fvaluename FROM tb_fault_code f INNER JOIN tb_dictionary d on d.fvalue = f.ftype where ftypeid = 7
+		<if test="str!=null and str!=''">
+			and ${str}
+		</if>
+		ORDER BY f.fid
+	</select>
+	
+	<select id="getFaultById" resultMap="faultMap">
+		SELECT f.fid,fcode,fdesc,ftype,d.fvaluename,f.fcreator FROM tb_fault_code f INNER JOIN tb_dictionary d on d.fvalue = f.ftype where ftypeid = 7 and f.fid = #{id}
+	</select>
+	
+	<insert id="addFault" parameterType="com.spring.model.Fault" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_fault_code(fcode, fdesc, ftype, fcreator, fcreatetime) VALUES (#{code},#{desc},#{type},#{creator},now())
+ 	</insert>
+	
+	<update id="editFault" parameterType="com.spring.model.Fault">
+		UPDATE tb_fault_code SET fcode=#{code},fdesc=#{desc},ftype=#{type},fmodifier=#{modifier},fupdatetime=now() where fid=#{id}
+	</update>
+	
+	<delete id="deleteFault" parameterType="java.math.BigInteger">
+		DELETE FROM tb_fault_code WHERE fid=#{id}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.dao.GatherMapper">
+
+	<resultMap id="gatherMap" type="com.spring.model.Gather">
+		<id property="id" column="fid"></id> 
+        <result property="gatherNo" column="fgather_no"></result>  
+        <result property="itemid" column="fitemId"></result>  
+        <result property="status" column="fstatus"></result>  
+        <result property="protocol" column="fprotocol"></result>
+       	<result property="ipurl" column="fipurl"></result>
+       	<result property="macurl" column="fmacurl"></result>
+       	<result property="leavetime" column="fleavetime"></result>
+       	<result property="itemname" column="fname"></result>
+		<result property="creator" column="fcreator" />
+		<result property="modifier" column="fmodifier" />
+	</resultMap>
+	
+	<select id="getGatherAll" resultMap="gatherMap">
+		SELECT g.*,i.fname itemname FROM tb_gather g inner join tb_insframework i on i.fid=g.fitemId 
+		INNER JOIN tb_insframework ins ON ins.fid = i.fparent
+		INNER JOIN tb_insframework insf ON insf.fid = ins.fparent
+		where 1=1
+		<if test="parent!=null and parent!=''">
+			and (i.fid=#{parent} or ins.fid=#{parent} or insf.fid=#{parent} or insf.fparent=#{parent})
+		</if>
+		<if test="str!=null and str!=''">
+			and ${str}
+		</if>
+		ORDER BY g.fid
+	</select>
+	
+	<select id="getGatherByNo" resultType="java.math.BigInteger">
+		select fid from tb_gather where fgather_no = #{gatherno}
+	</select>
+	
+	<select id="getGatherById" resultMap="gatherMap">
+		SELECT g.*,i.fname itemname FROM tb_gather g inner join tb_insframework i on i.fid=g.fitemId where g.fid = #{id}
+	</select>
+	
+	<select id="getGatherNoCount" resultType="java.lang.Integer">
+		select count(*) from tb_gather where fgather_no = #{gatherno}
+	</select>
+	
+	<insert id="addGather" parameterType="com.spring.model.Gather" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_gather(fgather_no,fitemId, fstatus, fprotocol, fipurl, fmacurl, fleavetime, fcreator, fcreatetime) VALUES
+		(#{gatherNo},#{itemid},#{status},#{protocol},#{ipurl},#{macurl},#{leavetime},#{creator},now())
+ 	</insert>
+	
+	<update id="editGather" parameterType="com.spring.model.Gather">
+		UPDATE tb_gather SET fgather_no=#{gatherNo},fitemId=#{itemid}, fstatus=#{status}, fprotocol=#{protocol}, fipurl=#{ipurl}, 
+		fmacurl=#{macurl}, fleavetime=#{leavetime},fmodifier=#{modifier},fupdatetime=now()  WHERE fid=#{id}
+	</update>
+	
+	<delete id="deleteGather" parameterType="java.math.BigInteger">
+		DELETE FROM tb_gather WHERE fid=#{id}
+	</delete>
+	
+</mapper>

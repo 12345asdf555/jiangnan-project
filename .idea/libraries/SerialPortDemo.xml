@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SerialPortDemo">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/OTCcomJN/lib/SerialPortDemo.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

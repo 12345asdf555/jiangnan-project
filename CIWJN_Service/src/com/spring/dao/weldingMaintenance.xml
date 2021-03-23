@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.dao.WeldingMaintenanceMapper">
+
+	<resultMap id="mmMap" type="com.spring.model.WeldingMaintenance">
+		<id property="id" column="fid"></id> 
+        <result property="back" column="fback"></result>
+		<result property="creator" column="fcreator" />
+		<result property="modifier" column="fmodifier" />
+		<result property="insfid" column="insfid" />
+        <association property="maintenance" column="fmaintenance_id" javaType="com.spring.model.MaintenanceRecord">  
+            <id property="id" column="rid"></id> 
+            <result property="viceman" column="fviceman"></result>  
+            <result property="desc" column="fdesc"></result>  
+            <result property="money" column="fmoney"></result>  
+            <result property="startTime" column="fstart_time"></result>
+        	<result property="endTime" column="fend_time"></result>
+        	<result property="typeId" column="ftype_id"></result>
+        	<result property="typename" column="typename"></result>
+        </association>
+        <association property="welding" column="fwelding_id" javaType="com.spring.model.WeldingMachine">  
+            <id property="id" column="wid"></id> 
+			<result property="equipmentNo" column="fequipment_no" />
+        </association>
+	</resultMap>
+	
+	<select id="getWeldingMaintenanceAll" resultMap="mmMap">
+		SELECT m.fid fid,r.fid rid, wm.fid wid, r.ftype_id ftype_id, fequipment_no,fviceman,d.fvaluename typename,r.fmoney,
+		fstart_time,fend_time,fdesc,finsframework_id insfid
+		FROM tb_welding_maintenance m 
+		inner join tb_maintenance_record r on  fmaintenance_id = r.fid
+        INNER JOIN tb_dictionary d on r.ftype_id = d.fvalue
+		inner join tb_welding_machine wm on m.fwelding_id = wm.fid
+		INNER JOIN tb_insframework i on i.fid = wm.finsframework_id 
+		INNER JOIN tb_insframework ins on ins.fid=i.fparent INNER JOIN tb_insframework insf on insf.fid = ins.fparent
+		where 1=1
+		<if test="wid!=null and wid!=''">
+			and wm.fid = #{wid}
+		</if>
+		<if test="str!=null and str!=''">
+			and ${str}
+		</if>
+		ORDER BY m.fid
+	</select>
+	
+	<select id="getWeldingMaintenanceById" resultMap="mmMap"  parameterType="java.math.BigInteger">
+		SELECT m.fid fid,r.fid rid, wm.fid wid, r.ftype_id ftype_id, fequipment_no,fviceman,r.fmoney,
+		fstart_time,fend_time,fdesc
+		FROM tb_welding_maintenance m 
+		inner join tb_maintenance_record r on  fmaintenance_id = r.fid
+		inner join tb_welding_machine wm on m.fwelding_id = wm.fid
+		where m.fid = #{wid}
+	</select>
+	
+	<select id="getInsfidByMachineid" resultType="java.math.BigInteger">
+		SELECT finsframework_id FROM tb_welding_machine WHERE fid=#{mid}
+	</select>
+	
+	<select id="getMaintainByWeldingMachinId" resultMap="mmMap">
+		SELECT fid,fmaintenance_id rid FROM tb_welding_maintenance WHERE fwelding_id = #{wid}
+	</select>
+	
+	<select id="getEndtime" resultMap="mmMap">
+		SELECT * FROM tb_maintenance_record r inner join tb_welding_maintenance m on m.fmaintenance_id = r.fid where m.fwelding_id=#{wid} and fend_time is null
+	</select>
+	
+	<insert id="addWeldingMaintenance" parameterType="com.spring.model.WeldingMaintenance" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_welding_maintenance(fwelding_id, fmaintenance_id,fcreator,fcreatetime) VALUES (#{welding.id},#{maintenance.id},#{creator},now())
+	</insert>
+	
+	<insert id="addMaintenanceRecord" parameterType="com.spring.model.MaintenanceRecord" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tb_maintenance_record(ftype_id, fviceman, fmoney, fdesc, fstart_time, fend_time, fcreator, fcreatetime) VALUES 
+		(#{typeId},#{viceman},#{money},#{desc},#{startTime},#{endTime},#{creator},now())
+	</insert>
+	
+	<update id="updateEndtime" parameterType="java.math.BigInteger">
+		UPDATE tb_maintenance_record SET fend_time = now()  WHERE fid = #{wid}
+	</update>
+	
+	<update id="updateMaintenanceRecord" parameterType="com.spring.model.MaintenanceRecord">
+		UPDATE tb_maintenance_record SET ftype_id=#{typeId},fviceman=#{viceman},fmoney=#{money},fdesc=#{desc},fstart_time=#{startTime},fend_time=#{endTime},fmodifier=#{modifier},fupdatetime=now()  WHERE fid=#{id}
+	</update>
+	
+	<delete id="deleteMaintenanceRecord" parameterType="java.math.BigInteger">
+		DELETE FROM tb_maintenance_record WHERE fid=#{mid}
+	</delete>
+	
+	<delete id="deleteWeldingMaintenance" parameterType="java.math.BigInteger">
+		DELETE FROM tb_welding_maintenance WHERE fid = #{wid}
+	</delete>
+	
+</mapper>
