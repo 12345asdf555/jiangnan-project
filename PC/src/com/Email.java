@@ -1,21 +1,15 @@
 package com;
 
-import java.io.*;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class Email {
 	private Date time;
@@ -49,11 +43,9 @@ public class Email {
 				// TODO Auto-generated method stub
 				//获取焊工以及管理员信息
 				try {
-					//File file = new File("PC/IPconfig.txt");
-					File file = new File("IPconfig.txt");
+					File file = new File(Server.ipConfigPath);
 					String filePath = file.getCanonicalPath();
 					FileInputStream in = new FileInputStream(filePath);
-					//FileInputStream in  = new FileInputStream("IPconfig.txt");
 		            InputStreamReader inReader;
 					inReader = new InputStreamReader(in, "UTF-8");
 		            BufferedReader bufReader = new BufferedReader(inReader);  

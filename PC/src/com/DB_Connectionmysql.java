@@ -2,8 +2,10 @@ package com;
 
 
 import java.math.BigDecimal;
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,21 +15,12 @@ public class DB_Connectionmysql {
 
     public String select;
     public String datasend = "";
-    public String fmachine;
     public String connet;
-    public ArrayList<String> listarray1 = new ArrayList<String>();
-    public ArrayList<String> listarray2 = new ArrayList<String>();
-    public ArrayList<String> listarray3 = new ArrayList<String>();
+    public static ArrayList<String> listarray1 = new ArrayList<String>();
+    public static ArrayList<String> listarray2 = new ArrayList<String>();
+    public static ArrayList<String> listarray3 = new ArrayList<String>();
 
-    public String getId() {
-        return datasend;
-    }
-
-    public void setId(String datasend) {
-        this.datasend = datasend;
-    }
-
-    public Server server;
+    public static Server server;
     public java.sql.Connection conn = null;
     public java.sql.Statement stmt = null;
 
@@ -55,10 +48,15 @@ public class DB_Connectionmysql {
     public String inSqlbase2 = "";
     public String inSqlbase3 = "";
     public String inSqlbase4 = "";
-    public final String inSqlbase = "insert into tb_live_data(fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,felectricity,fvoltage,fstatus,fwirefeedrate,FUploadDateTime,FWeldTime,fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage,fwelder_itemid,fjunction_itemid,fmachine_itemid,fmachinemodel,fwirediameter,fmaterialgas,fwmax_electricity,fwmin_electricity,fwmax_voltage,fwmin_voltage,fsolder_layer,fweld_bead) values";
 
+    public static String inSqlbase = "";
 
-    public DB_Connectionmysql() {
+    public static String insertrtDataSql(String rtDataTableName) {
+        String sql = "insert into " + rtDataTableName + "(fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,felectricity,fvoltage,fstatus," +
+                "fwirefeedrate,FUploadDateTime,FWeldTime,fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage," +
+                "fwelder_itemid,fjunction_itemid,fmachine_itemid,fmachinemodel,fwirediameter,fmaterialgas,fwmax_electricity,fwmin_electricity,fwmax_voltage," +
+                "fwmin_voltage,fsolder_layer,fweld_bead) values ";
+        return sql;
     }
 
     /**
@@ -77,20 +75,20 @@ public class DB_Connectionmysql {
 
         @Override
         public void run() {
-            if (null != sql && !"".equals(sql)) {
-                Connection connection = null;
-                Statement statement = null;
-                try {
-                    connection = Server.dbConnection.getConnection();
-                    statement = connection.createStatement();
-                    synchronized (sql) {
-                        statement.executeUpdate(sql);
+            synchronized (sql) {
+                if (null != sql && !"".equals(sql)) {
+                    Connection connection = null;
+                    Statement statement = null;
+                    try {
+                        connection = LiveDataDBConnection.getConnection();
+                        statement = connection.createStatement();
+                        statement.execute(sql);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        //释放连接，归还资源
+                        LiveDataDBConnection.close(connection, statement, null);
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } finally {
-                    //释放连接，归还资源
-                    Server.dbConnection.close(connection, statement, null);
                 }
             }
         }
@@ -108,8 +106,11 @@ public class DB_Connectionmysql {
         String weldnum = "0000";
         String ins = "00";
 
-        if (weldstatus == 0) {     //焊层焊道不为停止
+        if (null == inSqlbase || "".equals(inSqlbase)) {
+            inSqlbase = insertrtDataSql(TaskThread.getNowTableName());
+        }
 
+        if (weldstatus == 0) {     //焊层焊道不为停止
             switch (workbase) {
                 case 1:
                     date = new Date();
@@ -138,11 +139,12 @@ public class DB_Connectionmysql {
                         }
                     }
 
+                    //采集模块和焊机信息
                     for (int a = 0; a < listarray2.size(); a += 4) {
-                        if (gatherid == Long.parseLong(listarray2.get(a+2))) {
-                            gathernum = listarray2.get(a + 2);
-                            weldnum = listarray2.get(a + 1);
-                            ins = listarray2.get(a + 3);
+                        if (gatherid == Long.parseLong(listarray2.get(a))) {//采集id
+                            gathernum = listarray2.get(a + 2);//采集编号
+                            weldnum = listarray2.get(a + 1);//焊机名称/编号
+                            ins = listarray2.get(a + 3);//焊机组织id
                             break;
                         }
                     }
@@ -162,6 +164,7 @@ public class DB_Connectionmysql {
                     } else {
                         inSqlbase1 = inSqlbase1 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage1 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage1 + "','" + minvoltage1 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage1 + "','" + wminvoltage1 + "','" + ceng + "','" + dao + "')";
                     }
+
 
                     countbase1++;
 
@@ -203,7 +206,7 @@ public class DB_Connectionmysql {
                     }
 
                     for (int a = 0; a < listarray2.size(); a += 4) {
-                        if (gatherid == Long.parseLong(listarray2.get(a+2))) {
+                        if (gatherid == Long.parseLong(listarray2.get(a))) {
                             gathernum = listarray2.get(a + 2);
                             weldnum = listarray2.get(a + 1);
                             ins = listarray2.get(a + 3);
@@ -263,7 +266,7 @@ public class DB_Connectionmysql {
                     }
 
                     for (int a = 0; a < listarray2.size(); a += 4) {
-                        if (gatherid == Long.parseLong(listarray2.get(a+2))) {
+                        if (gatherid == Long.parseLong(listarray2.get(a))) {
                             gathernum = listarray2.get(a + 2);
                             weldnum = listarray2.get(a + 1);
                             ins = listarray2.get(a + 3);
@@ -322,7 +325,7 @@ public class DB_Connectionmysql {
                     }
 
                     for (int a = 0; a < listarray2.size(); a += 4) {
-                        if (gatherid == Long.parseLong(listarray2.get(a+2))) {
+                        if (gatherid == Long.parseLong(listarray2.get(a))) {
                             gathernum = listarray2.get(a + 2);
                             weldnum = listarray2.get(a + 1);
                             ins = listarray2.get(a + 3);

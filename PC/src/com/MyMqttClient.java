@@ -1,6 +1,5 @@
 package com;
 
-import io.netty.channel.socket.SocketChannel;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -8,30 +7,23 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
 public class MyMqttClient {
     public static MqttClient mqttClient = null;
     private static MemoryPersistence memoryPersistence = null;
     private static MqttConnectOptions mqttConnectOptions = null;
-    private String socketfail;
-    public HashMap<String, SocketChannel> socketlist = new HashMap<>();
     private String ip;
     private String ip1;
-    public MyMqttClient mqtt;
     public MqttReceriveCallback mqttReceriveCallback = new MqttReceriveCallback();
 
     /*
      * static { init("MQTT_FX_Client"); }
      */
-
     public void init(String clientId) {
         try {
-            File file = new File("PC/IPconfig.txt");
-            //File file = new File("IPconfig.txt");
+            File file = new File(Server.ipConfigPath);
             String filePath = file.getCanonicalPath();
             FileInputStream in = new FileInputStream(filePath);
-            //FileInputStream in = new FileInputStream("IPconfig.txt");
             InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
             BufferedReader bufReader = new BufferedReader(inReader);
             String line = null;
@@ -58,6 +50,7 @@ public class MyMqttClient {
             mqttConnectOptions.setCleanSession(true);
             mqttConnectOptions.setConnectionTimeout(300);
             mqttConnectOptions.setKeepAliveInterval(300);
+            mqttConnectOptions.setUserName("emqxPcClient");
             try {
                 memoryPersistence = new MemoryPersistence();
                 if (null != memoryPersistence && null != clientId) {
@@ -122,7 +115,7 @@ public class MyMqttClient {
         }
     }
 
-    //	鍙戝竷娑堟伅
+    // 发布主题和消息内容
     public void publishMessage(String pubTopic, String message, int qos) {
         if (null != mqttClient && mqttClient.isConnected()) {
             MqttMessage mqttMessage = new MqttMessage();
@@ -175,7 +168,7 @@ public class MyMqttClient {
 
     }
 
-    //	璁㈤槄涓婚
+    //	订阅主题
     public void subTopic(String topic) {
         if (null != mqttClient && mqttClient.isConnected()) {
             try {

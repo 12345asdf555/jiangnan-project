@@ -1,8 +1,5 @@
 package com;
 
-import java.io.*;
-import java.util.concurrent.TimeUnit;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -18,6 +15,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.CharsetUtil;
+
+import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class Client {
     private EventLoopGroup loop = new NioEventLoopGroup();
@@ -45,11 +45,9 @@ public class Client {
         if (bootstrap != null) {
 
             try {
-                //File file = new File("PC/IPconfig.txt");
-                File file = new File("IPconfig.txt");
+                File file = new File(Server.ipConfigPath);
                 String filePath = file.getCanonicalPath();
                 FileInputStream in = new FileInputStream(filePath);
-                //FileInputStream in = new FileInputStream("IPconfig.txt");
                 InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
                 BufferedReader bufReader = new BufferedReader(inReader);
                 String line = null;

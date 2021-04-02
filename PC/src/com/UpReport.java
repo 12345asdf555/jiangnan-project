@@ -25,12 +25,10 @@ public class UpReport {
 	
     public void run(){
     	try {
-			//File file = new File("PC/IPconfig.txt");
-			File file = new File("IPconfig.txt");
+			File file = new File(Server.ipConfigPath);
 			String filePath = file.getCanonicalPath();
 			FileInputStream in = new FileInputStream(filePath);
-    		//FileInputStream in = new FileInputStream("IPconfig.txt");
-            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");  
+            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
             BufferedReader bufReader = new BufferedReader(inReader);  
             String line = null; 
             int writetime=0;

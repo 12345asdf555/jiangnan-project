@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class Mysql {
 
@@ -19,6 +20,12 @@ public class Mysql {
         this.db = db;
     }
 
+    //判断是否为数字
+    public static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
+
     public void Mysqlbase(String str) {
         Date time;
         Timestamp timesql = null;
@@ -29,14 +36,30 @@ public class Mysql {
             String check11 = str.substring(282, 284);
             if (check1.equals("7E") && check11.equals("7D")) {
 
-                long welderid = Integer.valueOf(str.substring(34, 38));
-                long weldid = Integer.valueOf(str.substring(18, 22));
-                long gatherno = Integer.valueOf(str.substring(14, 18),16);//采集编号
-                long itemid = Integer.valueOf(str.substring(232, 234));
-                String weldmodel = Integer.valueOf(str.subSequence(12, 14).toString(), 16).toString();
+                long welderid = 0000;
+                long weldid = 0000;
+                long gatherid = 0000;//采集id
+                long itemid = 00;
 
+                if (isInteger(str.substring(34, 38))) {
+                    welderid = Integer.valueOf(str.substring(34, 38));
+                }
+                if (isInteger(str.substring(18, 22))) {
+                    weldid = Integer.valueOf(str.substring(18, 22));
+                }
+                if (isInteger(str.substring(14, 18))) {
+                    gatherid = Integer.valueOf(str.substring(14, 18));
+                }
+
+                if (isInteger(str.substring(232, 234))){
+                    itemid = Integer.valueOf(str.substring(232, 234));
+                }
+                String weldmodel = Integer.valueOf(str.subSequence(12, 14).toString(), 16).toString();
                 for (int a = 0; a < 161; a += 80) {
-                    long junctionid = Integer.valueOf(str.substring(70 + a, 78 + a));
+                    long junctionid = 0;
+                    if (isInteger(str.substring(70 + a, 78 + a))){
+                        junctionid = Integer.valueOf(str.substring(70 + a, 78 + a));
+                    }
                     BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(50 + a, 54 + a).toString(), 16));
                     BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(54 + a, 58 + a).toString(), 16));
                     int status = Integer.parseInt(str.subSequence(78 + a, 80 + a).toString(), 16);
@@ -86,7 +109,7 @@ public class Mysql {
                     BigDecimal fwirediameter = new BigDecimal(Integer.valueOf(str.subSequence(80 + a, 82 + a).toString(), 16));
                     int fmaterialgas = Integer.parseInt(str.subSequence(82 + a, 84 + a).toString(), 16);
 
-                    db.DB_Connectionmysqlrun(welderid, weldid, gatherno, itemid, weldid, weldmodel, junctionid, electricity, voltage, status, fwirefeedrate, timesql, channel, maxelectricity, minelectricity, maxvoltage, minvoltage, fwirediameter, fmaterialgas, listarray1, listarray2, listarray3, wmaxelectricity, wminelectricity, wmaxvoltage, wminvoltage);
+                    db.DB_Connectionmysqlrun(welderid, weldid, gatherid, itemid, weldid, weldmodel, junctionid, electricity, voltage, status, fwirefeedrate, timesql, channel, maxelectricity, minelectricity, maxvoltage, minvoltage, fwirediameter, fmaterialgas, listarray1, listarray2, listarray3, wmaxelectricity, wminelectricity, wmaxvoltage, wminvoltage);
 
                 }
             }
@@ -99,7 +122,7 @@ public class Mysql {
                 long welderid = Integer.valueOf(str.substring(34, 38));
                 long weldid = Integer.valueOf(str.substring(18, 22));
                 //long gatherid = Integer.valueOf(str.substring(14, 18));
-                long gatherno = Integer.valueOf(str.substring(14, 18),16);//采集编号
+                long gatherno = Integer.valueOf(str.substring(14, 18), 16);//采集编号
                 long itemid = Integer.valueOf(str.substring(120, 122));
                 String weldmodel = Integer.valueOf(str.subSequence(12, 14).toString(), 16).toString();
 
@@ -172,100 +195,90 @@ public class Mysql {
                 String check1 = str.substring(0, 2);
                 String check11 = str.substring(108, 110);
                 if (check1.equals("FA") && check11.equals("F5")) {
-
-                    //校验长度
-                    int check2 = str.length();
-                    if (check2 == 110) {
-
-                        //校验位校验
-                        String check3 = str.substring(2, 104);
-                        String check5 = "";
-                        int check4 = 0;
-                        for (int i11 = 0; i11 < check3.length() / 2; i11++) {
-                            String tstr1 = check3.substring(i11 * 2, i11 * 2 + 2);
-                            check4 += Integer.valueOf(tstr1, 16);
-                        }
-                        if ((Integer.toHexString(check4)).toUpperCase().length() == 2) {
-                            check5 = ((Integer.toHexString(check4)).toUpperCase());
-                        } else {
-                            check5 = ((Integer.toHexString(check4)).toUpperCase()).substring(1, 3);
-                        }
-                        String check6 = str.substring(104, 106);
-                        if (check5.equals(check6)) {
-
-                            for (int i = 0; i < 78; i += 26) {
-
-                                BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(26 + i, 30 + i).toString(), 16));
-                                BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(30 + i, 34 + i).toString(), 16));
-                                long sensor_Num1 = Integer.valueOf(str.subSequence(34 + i, 38 + i).toString(), 16);
-                                String sensor_Num = String.valueOf(sensor_Num1);
-                                if (sensor_Num.length() < 4) {
-                                    int num = 4 - sensor_Num.length();
-                                    for (int i1 = 0; i1 < num; i1++) {
-                                        sensor_Num = "0" + sensor_Num;
-                                    }
-                                }
-                                long machine_id1 = Integer.valueOf(str.subSequence(10, 14).toString(), 16);
-                                String machine_id = String.valueOf(machine_id1);
-                                if (machine_id.length() < 4) {
-                                    int num = 4 - machine_id.length();
-                                    for (int i1 = 0; i1 < num; i1++) {
-                                        machine_id = "0" + machine_id;
-                                    }
-                                }
-                                long welder_id1 = Integer.valueOf(str.subSequence(14, 18).toString(), 16);
-                                String welder_id = String.valueOf(welder_id1);
-                                if (welder_id.length() < 4) {
-                                    int num = 4 - welder_id.length();
-                                    for (int i1 = 0; i1 < num; i1++) {
-                                        welder_id = "0" + welder_id;
-                                    }
-                                }
-                                long code1 = Integer.valueOf(str.subSequence(18, 26).toString(), 16);
-                                String code = String.valueOf(code1);
-                                if (code.length() < 8) {
-                                    int num = 8 - code.length();
-                                    for (int i1 = 0; i1 < num; i1++) {
-                                        code = "0" + code;
-                                    }
-                                }
-                                long year = Integer.valueOf(str.subSequence(40 + i, 42 + i).toString(), 16);
-                                String yearstr = String.valueOf(year);
-                                long month = Integer.valueOf(str.subSequence(42 + i, 44 + i).toString(), 16);
-                                String monthstr = String.valueOf(month);
-                                long day = Integer.valueOf(str.subSequence(44 + i, 46 + i).toString(), 16);
-                                String daystr = String.valueOf(day);
-                                long hour = Integer.valueOf(str.subSequence(46 + i, 48 + i).toString(), 16);
-                                String hourstr = String.valueOf(hour);
-                                long minute = Integer.valueOf(str.subSequence(48 + i, 50 + i).toString(), 16);
-                                String minutestr = String.valueOf(minute);
-                                long second = Integer.valueOf(str.subSequence(50 + i, 52 + i).toString(), 16);
-                                String secondstr = String.valueOf(second);
-                                int status = Integer.parseInt(str.subSequence(38 + i, 40 + i).toString(), 16);
-
-                                String timestr = yearstr + "-" + monthstr + "-" + daystr + " " + hourstr + ":" + minutestr + ":" + secondstr;
-                                try {
-                                    Date time = DateTools.parse("yy-MM-dd HH:mm:ss", timestr);
-                                    //java.util.Date time1 = timeshow.parse(timestr);
-                                    Timestamp timesql = new Timestamp(time.getTime());
-
-                                    String fitemid = str.substring(106, 108);
-
-                                    db.DB_Connectionmysqlrun(electricity, voltage, sensor_Num, machine_id, welder_id, code, status, fitemid, timesql, listarray1, listarray2, listarray3);
-                                } catch (Exception e) {
-                                    str = "";
-                                    e.printStackTrace();
-                                }
-
-                            }
-                            str = "";
-                        } else {
-                            System.out.print("数据接收校验位错误");
-                            str = "";
-                        }
-
+                    //校验位校验
+                    String check3 = str.substring(2, 104);
+                    String check5 = "";
+                    int check4 = 0;
+                    for (int i11 = 0; i11 < check3.length() / 2; i11++) {
+                        String tstr1 = check3.substring(i11 * 2, i11 * 2 + 2);
+                        check4 += Integer.valueOf(tstr1, 16);
+                    }
+                    if ((Integer.toHexString(check4)).toUpperCase().length() == 2) {
+                        check5 = ((Integer.toHexString(check4)).toUpperCase());
                     } else {
-                        System.out.print("数据接收长度错误");
+                        check5 = ((Integer.toHexString(check4)).toUpperCase()).substring(1, 3);
+                    }
+                    String check6 = str.substring(104, 106);
+                    if (check5.equals(check6)) {
+
+                        for (int i = 0; i < 78; i += 26) {
+
+                            BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(26 + i, 30 + i).toString(), 16));
+                            BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(30 + i, 34 + i).toString(), 16));
+                            long sensor_Num1 = Integer.valueOf(str.subSequence(34 + i, 38 + i).toString(), 16);
+                            String sensor_Num = String.valueOf(sensor_Num1);
+                            if (sensor_Num.length() < 4) {
+                                int num = 4 - sensor_Num.length();
+                                for (int i1 = 0; i1 < num; i1++) {
+                                    sensor_Num = "0" + sensor_Num;
+                                }
+                            }
+                            long machine_id1 = Integer.valueOf(str.subSequence(10, 14).toString(), 16);
+                            String machine_id = String.valueOf(machine_id1);
+                            if (machine_id.length() < 4) {
+                                int num = 4 - machine_id.length();
+                                for (int i1 = 0; i1 < num; i1++) {
+                                    machine_id = "0" + machine_id;
+                                }
+                            }
+                            long welder_id1 = Integer.valueOf(str.subSequence(14, 18).toString(), 16);
+                            String welder_id = String.valueOf(welder_id1);
+                            if (welder_id.length() < 4) {
+                                int num = 4 - welder_id.length();
+                                for (int i1 = 0; i1 < num; i1++) {
+                                    welder_id = "0" + welder_id;
+                                }
+                            }
+                            long code1 = Integer.valueOf(str.subSequence(18, 26).toString(), 16);
+                            String code = String.valueOf(code1);
+                            if (code.length() < 8) {
+                                int num = 8 - code.length();
+                                for (int i1 = 0; i1 < num; i1++) {
+                                    code = "0" + code;
+                                }
+                            }
+                            long year = Integer.valueOf(str.subSequence(40 + i, 42 + i).toString(), 16);
+                            String yearstr = String.valueOf(year);
+                            long month = Integer.valueOf(str.subSequence(42 + i, 44 + i).toString(), 16);
+                            String monthstr = String.valueOf(month);
+                            long day = Integer.valueOf(str.subSequence(44 + i, 46 + i).toString(), 16);
+                            String daystr = String.valueOf(day);
+                            long hour = Integer.valueOf(str.subSequence(46 + i, 48 + i).toString(), 16);
+                            String hourstr = String.valueOf(hour);
+                            long minute = Integer.valueOf(str.subSequence(48 + i, 50 + i).toString(), 16);
+                            String minutestr = String.valueOf(minute);
+                            long second = Integer.valueOf(str.subSequence(50 + i, 52 + i).toString(), 16);
+                            String secondstr = String.valueOf(second);
+                            int status = Integer.parseInt(str.subSequence(38 + i, 40 + i).toString(), 16);
+
+                            String timestr = yearstr + "-" + monthstr + "-" + daystr + " " + hourstr + ":" + minutestr + ":" + secondstr;
+                            try {
+                                Date time = DateTools.parse("yy-MM-dd HH:mm:ss", timestr);
+                                //java.util.Date time1 = timeshow.parse(timestr);
+                                Timestamp timesql = new Timestamp(time.getTime());
+
+                                String fitemid = str.substring(106, 108);
+
+                                db.DB_Connectionmysqlrun(electricity, voltage, sensor_Num, machine_id, welder_id, code, status, fitemid, timesql, listarray1, listarray2, listarray3);
+                            } catch (Exception e) {
+                                str = "";
+                                e.printStackTrace();
+                            }
+
+                        }
+                        str = "";
+                    } else {
+                        System.out.print("数据接收校验位错误");
                         str = "";
                     }
 

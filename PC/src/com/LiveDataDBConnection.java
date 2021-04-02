@@ -4,13 +4,16 @@ import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 /**
- * 采用阿里的德鲁伊Druid连接池连接Oracle数据库
+ * 采用阿里的德鲁伊Druid连接池连接mysql数据库
  */
-public class MysqlDBConnection {
+public class LiveDataDBConnection {
     //连接池对象
     private static DataSource dataSource;
 
@@ -18,7 +21,7 @@ public class MysqlDBConnection {
         if (dataSource == null) {
             try {
                 //1.得到配置文件的输入流，注：/ 不能省略
-                InputStream inputStream = MysqlDBConnection.class.getResourceAsStream("/config/druid.properties");
+                InputStream inputStream = LiveDataDBConnection.class.getResourceAsStream("/config/druid-livedata.properties");
                 //2.创建Properties对象，读取上面的配置文件
                 Properties properties = new Properties();
                 properties.load(inputStream);
@@ -29,6 +32,13 @@ public class MysqlDBConnection {
                 System.out.println("连接池异常！");
             }
         }
+    }
+
+    /**
+     * 获取连接池方法
+     */
+    private static DataSource getDataSource() {
+        return dataSource;
     }
 
     /**
@@ -71,20 +81,13 @@ public class MysqlDBConnection {
     }
 
     /**
-     * 获取连接池方法
-     */
-    private static DataSource getDataSource() {
-        return dataSource;
-    }
-
-    /**
      * 测试
      */
     private static void test() {
         Connection conn = null;
         Statement statement = null;
         try {
-            conn = MysqlDBConnection.getConnection();
+            conn = LiveDataDBConnection.getConnection();
 
             statement = conn.createStatement();
             String sql = "SELECT FID,FWELDER_NO,FNAME FROM TB_WELDER";
@@ -98,7 +101,7 @@ public class MysqlDBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            MysqlDBConnection.close(conn, statement, null);
+            LiveDataDBConnection.close(conn, statement, null);
         }
     }
 

@@ -167,10 +167,10 @@ public class DB_Connectioncode {
             	String fequipment_no = rs.getString("fequipment_no");
              	String fgather_no = rs.getString("fgather_no");
              	String fitemId = rs.getString("finsframework_id");
-             	listarray2.add(fid);
-             	listarray2.add(fequipment_no);
-             	listarray2.add(fgather_no);
-             	listarray2.add(fitemId);
+             	listarray2.add(fid);//采集id
+             	listarray2.add(fequipment_no);//焊机编号
+             	listarray2.add(fgather_no);//采集编号
+             	listarray2.add(fitemId);//焊机组织id
              	
              }
              	

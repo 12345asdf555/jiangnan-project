@@ -42,7 +42,7 @@ public class DB_Connectionandroid {
         this.datasend = datasend;
     }
 
-    public Server server;
+    public static Server server;
 
     public java.sql.Connection conn = null;
     public java.sql.Statement stmt = null;
@@ -74,7 +74,7 @@ public class DB_Connectionandroid {
                 Connection connection = null;
                 Statement statement = null;
                 try {
-                    connection = Server.dbConnection.getConnection();
+                    connection = server.dbConnection.getConnection();
                     statement = connection.createStatement();
                     synchronized (sql) {
                         statement.executeUpdate(sql);
@@ -83,7 +83,7 @@ public class DB_Connectionandroid {
                     e.printStackTrace();
                 } finally {
                     //释放连接，归还资源
-                    Server.dbConnection.close(connection, statement, null);
+                    server.dbConnection.close(connection, statement, null);
                 }
             }
         }

@@ -11,7 +11,6 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,16 +28,15 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
     public java.sql.Statement stmt = null;
     public java.sql.Connection conn = null;
     public SocketChannel socketchannel = null;
-    public ArrayList<String> listarray1 = new ArrayList<String>();
-    public ArrayList<String> listarray2 = new ArrayList<String>();
-    public ArrayList<String> listarray3 = new ArrayList<String>();
-    public HashMap<String, SocketChannel> socketlist = new HashMap<>();
-    public HashMap<String, SocketChannel> websocketlist = new HashMap<>();
-    public Mysql mysql = new Mysql();
-    public Android android = new Android();
-    public Websocket websocket = new Websocket();
-    public MyMqttClient mqtt;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-ddHH:mm:ss");
+    public static ArrayList<String> listarray1 = new ArrayList<String>();
+    public static ArrayList<String> listarray2 = new ArrayList<String>();
+    public static ArrayList<String> listarray3 = new ArrayList<String>();
+    public static HashMap<String, SocketChannel> socketlist = new HashMap<>();
+    public static HashMap<String, SocketChannel> websocketlist = new HashMap<>();
+    public static Mysql mysql = new Mysql();
+    public static Android android = new Android();
+    public static Websocket websocket = new Websocket();
+    public static MyMqttClient mqtt;
 
     /**
      * 读取通道中的消息
@@ -63,22 +61,24 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
 
     private void workSpace(String str) {
         String socketfail = "";
-        if (str.substring(0, 2).equals("7E") && (str.substring(10, 12).equals("22")) && (str.length() == 284 || str.length() == 124)) {
+        if ("7E".equals(str.substring(0, 2)) && ("22".equals(str.substring(10, 12))) && (str.length() == 284 || str.length() == 124)) {
+            //数据存入数据库
             mysql.Mysqlbase(str);
+            //发送前端
             websocket.Websocketbase(str, listarray2, listarray3, websocketlist);
 
-        } else if (str.substring(0, 2).equals("FA")) {  //处理实时数据
-            mysql.Mysqlrun(str);
-            websocket.Websocketrun(str, listarray2, listarray3, websocketlist);
-            if (socketchannel != null) {
-                try {
-                    socketchannel.writeAndFlush(str).sync();
-                } catch (Exception e) {
-                    socketchannel = null;
-                }
-            }
+        } else if ("FA".equals(str.substring(0, 2)) && str.length() == 110) {  //处理实时数据
+//            mysql.Mysqlrun(str);
+//            websocket.Websocketrun(str, listarray2, listarray3, websocketlist);
+//            if (socketchannel != null) {
+//                try {
+//                    socketchannel.writeAndFlush(str).sync();
+//                } catch (Exception e) {
+//                    socketchannel = null;
+//                }
+//            }
         } else if (str.substring(0, 2).equals("þ")) {   //处理android数据
-            android.Androidrun(str);
+            //android.Androidrun(str);
         } else if (str.substring(0, 2).equals("JN")) {  //江南任务派发 任务号、焊工、焊机、状态
             String[] datainf = str.split(",");
             String datasend = "";
@@ -89,7 +89,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
             Connection connection = null;
             Statement statement = null;
             try {
-                connection = Server.dbConnection.getConnection();
+                connection = MysqlDBConnection.getConnection();
                 statement = connection.createStatement();
                 String inSql = "SELECT tb_welded_junction.fwelded_junction_no,tb_specification.fsolder_layer,tb_specification.fweld_bead FROM tb_welded_junction INNER JOIN tb_specification ON tb_welded_junction.fwpslib_id = tb_specification.fwpslib_id WHERE tb_welded_junction.fid = '" + datainf[1] + "' ORDER BY tb_specification.fweld_bead asc";
                 ResultSet rs = statement.executeQuery(inSql);
@@ -121,7 +121,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                 e.getStackTrace();
             } finally {
                 //释放连接，归还资源
-                Server.dbConnection.close(connection, statement, null);
+                MysqlDBConnection.close(connection, statement, null);
             }
 
             if (cengdao.length() != 100) {
@@ -194,24 +194,24 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
         } else if (str.substring(0, 2).equals("fe") && str.substring(str.length() - 2, str.length()).equals("fe")) {  //华域PLC
             ////System.out.println("1");
             //System.out.println("接收数据:"+str);
-            if (socketchannel != null) {
-                ////System.out.println(socketchannel);
-                synchronized (socketchannel) {
-                    try {
-                        socketchannel.writeAndFlush(str).sync();
-                        //System.out.println("发送成功:"+str);
-                    } catch (Exception e) {
-                        try {
-                            socketchannel.close().sync();
-                        } catch (InterruptedException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
-                        socketchannel = null;
-                        //e.printStackTrace();
-                    }
-                }
-            }
+//            if (socketchannel != null) {
+//                ////System.out.println(socketchannel);
+//                synchronized (socketchannel) {
+//                    try {
+//                        socketchannel.writeAndFlush(str).sync();
+//                        //System.out.println("发送成功:"+str);
+//                    } catch (Exception e) {
+//                        try {
+//                            socketchannel.close().sync();
+//                        } catch (InterruptedException e1) {
+//                            // TODO Auto-generated catch block
+//                            e1.printStackTrace();
+//                        }
+//                        socketchannel = null;
+//                        //e.printStackTrace();
+//                    }
+//                }
+//            }
         } else {    //处理焊机下发和上传
 //            System.out.println("mqtt.publishMessage:"+str);
             mqtt.publishMessage("weldmes/upparams", str, 0);
@@ -240,7 +240,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
      * @return: void
      */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         InetSocketAddress insocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = insocket.getAddress().getHostAddress();
         int port = insocket.getPort();
