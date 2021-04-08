@@ -1,10 +1,8 @@
 package com.spring.model;
 
-import java.math.BigInteger;
-
-import javax.persistence.Transient;
-
 import org.springframework.stereotype.Component;
+
+import java.math.BigInteger;
 
 /**
  * 焊口
@@ -49,7 +47,9 @@ public class WeldedJunction {
 	private BigInteger insfid;
 	private BigInteger iid;
 	private String iname;
-	
+	private BigInteger fjunctionId;
+	private BigInteger fwelderId;
+
 	public BigInteger getInsfid() {
 		return insfid;
 	}
@@ -266,5 +266,20 @@ public class WeldedJunction {
 	public void setIname(String iname) {
 		this.iname = iname;
 	}
-	
+
+	public BigInteger getFjunctionId() {
+		return fjunctionId;
+	}
+
+	public void setFjunctionId(BigInteger fjunctionId) {
+		this.fjunctionId = fjunctionId;
+	}
+
+	public BigInteger getFwelderId() {
+		return fwelderId;
+	}
+
+	public void setFwelderId(BigInteger fwelderId) {
+		this.fwelderId = fwelderId;
+	}
 }

@@ -1,6 +1,7 @@
 package com.spring.dto;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class WeldDto {
 	private BigInteger dtoId;
@@ -32,7 +33,9 @@ public class WeldDto {
 	private BigInteger machineid;
 	private String welderno;
 	private String junctionno;
-	
+	private String rtDataTableName;
+	private List<String> rtDataTableNames;
+
 	public String getJunctionno() {
 		return junctionno;
 	}
@@ -207,5 +210,20 @@ public class WeldDto {
 	public void setDtoStatus(int dtoStatus) {
 		this.dtoStatus = dtoStatus;
 	}
-	
+
+	public String getRtDataTableName() {
+		return rtDataTableName;
+	}
+
+	public void setRtDataTableName(String rtDataTableName) {
+		this.rtDataTableName = rtDataTableName;
+	}
+
+	public List<String> getRtDataTableNames() {
+		return rtDataTableNames;
+	}
+
+	public void setRtDataTableNames(List<String> rtDataTableNames) {
+		this.rtDataTableNames = rtDataTableNames;
+	}
 }

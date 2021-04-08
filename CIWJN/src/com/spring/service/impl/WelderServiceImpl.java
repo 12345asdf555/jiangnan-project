@@ -1,17 +1,16 @@
 package com.spring.service.impl;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.PageHelper;
 import com.spring.dao.WelderMapper;
 import com.spring.model.Welder;
 import com.spring.page.Page;
 import com.spring.service.WelderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigInteger;
+import java.util.List;
 
 @Service
 @Transactional
@@ -43,6 +42,11 @@ public class WelderServiceImpl implements WelderService {
 	@Override
 	public int getWeldernoCount(String wno) {
 		return wm.getWeldernoCount(wno);
+	}
+
+	@Override
+	public List<Welder> getWelderAllNoPage() {
+		return wm.getWelderAll(null);
 	}
 
 }

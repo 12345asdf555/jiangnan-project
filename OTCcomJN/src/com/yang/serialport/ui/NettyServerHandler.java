@@ -75,7 +75,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                     str += r;
                 }
             }
-            publishData(str, ctx);
+            publishData(str);
         } catch (Exception e) {
             System.out.println("1");
             e.printStackTrace();
@@ -85,9 +85,9 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
         }
     }
 
-    private void publishData(String str, ChannelHandlerContext ctx) {
+    private void publishData(String str) {
         if (str.length() >= 6) {
-            if (str.substring(0, 2).equals("7E") && (str.substring(10, 12).equals("22")) && str.length() == 282) {
+            if (str.length() == 282 && "7E".equals(str.substring(0, 2)) && ("22".equals(str.substring(10, 12)))) {
                 //int gatherno = Integer.parseInt(str.substring(16, 20), 16);//采集编号
                 //cachedThreadPool.execute(new MapGatherno(gatherno, ctx));
                 str = trans(str); //融合有无任务模式
@@ -102,13 +102,16 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                     dataView.setText("服务器未开启" + "\r\n");
                 }
             } else if (str.substring(0, 2).equals("FA")) {
-                str = str.substring(0, 106) + fitemid + "F5";
-                try {
-                    StaticClass.chcli.writeAndFlush(str).sync();
-                    dataView.append("实时:" + str + "\r\n");
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    dataView.setText("服务器未开启" + "\r\n");
+                System.out.println("长度："+str.length()+"--str:"+str);
+                if (str.length() == 106){
+                    str = str.substring(0, 106) + fitemid + "F5";
+                    try {
+                        StaticClass.chcli.writeAndFlush(str).sync();
+                        dataView.append("实时:" + str + "\r\n");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        dataView.setText("服务器未开启" + "\r\n");
+                    }
                 }
             } else {
                 try {
@@ -185,7 +188,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
 
                 //校验位校验
                 String check3 = str.substring(0, 278);
-                String check5 = "";
+                String check5 = "";//EC
                 int check4 = 0;
                 for (int i11 = 0; i11 < check3.length() / 2; i11++) {
                     String tstr1 = check3.substring(i11 * 2, i11 * 2 + 2);
@@ -197,13 +200,13 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                     check5 = ((Integer.toHexString(check4)).toUpperCase()).substring(2, 4);
                 }
                 String check6 = str.substring(278, 280);
-                if (check6.equals(check6)) {
+                if (check6.equals(check5)) {
 
                     StringBuilder sb = new StringBuilder(str);
                     str = sb.toString();
 
-                    String weld = str.substring(14, 18);
-                    String welder = str.substring(34, 38);
+                    String weld = str.substring(14, 18);//采集编号【16进制】
+                    String welder = str.substring(34, 38);//焊工号【16进制】
                     String junction1 = str.substring(70, 78);
                     String junction2 = str.substring(150, 158);
                     String junction3 = str.substring(230, 238);
@@ -213,7 +216,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
 
                         //焊机编号对应id
                         int countweld = 0;
-                        String weldid = "";
+                        String weldid = "";//焊机id
                         if (StaticClass.listweld.size() == 0) {
                             sb.replace(14, 18, "0000");
                             sb.replace(18, 22, "0000");

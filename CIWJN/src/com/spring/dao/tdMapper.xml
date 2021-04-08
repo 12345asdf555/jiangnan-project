@@ -88,13 +88,30 @@
 	</select>
 	
 	<select id="getBootTime" resultType="String">
-		SELECT FWeldTime FROM tb_live_data WHERE 1=1 
-		<if test="machineId!=null and machineId!=''">
-			AND fmachine_id = #{machineId} 
+		<if test="nowTableName != null and nowTableName != '' and orderType != null and orderType != ''">
+			SELECT FWeldTime FROM ${nowTableName}
+			WHERE 1=1
+			<if test="machineId!=null and machineId!=''">
+				AND fmachine_id = #{machineId}
+			</if>
+			<if test="time!=null and time!=''">
+				AND FWeldTime >= #{time}
+			</if>
+			ORDER BY FWeldTime ${orderType} LIMIT 1
 		</if>
-		<if test="time!=null and time!=''">
-			And FWeldTime &gt;= #{time} 
+	</select>
+
+	<select id="getJunctionIdByRtdata" resultType="java.lang.String">
+		<if test="tableName != null and tableName != ''">
+			SELECT fjunction_no FROM ${tableName}
+			WHERE fjunction_id != 0
+			<if test="machineId != null">
+				and fmachine_id = #{machineId}
+			</if>
+			<if test="startTime != null">
+				and FWeldTime >= #{startTime}
+			</if>
+			ORDER BY FWeldTime DESC LIMIT 1
 		</if>
-		ORDER BY FWeldTime ASC LIMIT 0,1
 	</select>
 </mapper>

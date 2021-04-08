@@ -21,13 +21,34 @@
 	<context:component-scan base-package="com.erdangjiade.spring.security" />
     
 	<!-- 1. 数据源 : DriverManagerDataSource -->
-	<bean id="dataSource"
+	<bean id="cIWJNDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 <!--		<property name="url" value="jdbc:mysql://localhost:3306/CIWJN?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3" />-->
 		<property name="url" value="jdbc:mysql://localhost:3306/CIWJN?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3&amp;serverTimezone=UTC" />
 		<property name="username" value="root" />
 		<property name="password" value="123456" />
+	</bean>
+	<!-- 2. 数据源 : DriverManagerDataSource -->
+	<bean id="realTimeData"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+<!--		<property name="url" value="jdbc:mysql://localhost:3306/CIWJN?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3" />-->
+		<property name="url" value="jdbc:mysql://localhost:3306/realtimedata?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3&amp;serverTimezone=UTC" />
+		<property name="username" value="root" />
+		<property name="password" value="123456" />
+	</bean>
+
+
+	<!--动态数据源的配置-->
+	<bean id="dynamicDataSource" class="com.erdangjiade.spring.security.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.Object">
+				<entry value-ref="cIWJNDataSource" key="CIWJN"/>
+				<entry value-ref="realTimeData" key="realTimeData"/>
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="cIWJNDataSource"/>
 	</bean>
 
 	<!--
@@ -36,9 +57,8 @@
 		MyBatis定义数据源,同意加载配置
 	-->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"></property>
-
-		<property name="configLocation" value="classpath:config/mybatis-config.xml" /> 
+		<property name="dataSource" ref="dynamicDataSource"></property>
+		<property name="configLocation" value="classpath:config/mybatis-config.xml" />
 	</bean>
 
 	<!--
@@ -47,8 +67,8 @@
 		basePackage:指定sql映射文件/接口所在的包（自动扫描）
 	-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.spring.dao"></property>
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<property name="basePackage" value="com.spring.dao"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
 	</bean>
     <aop:aspectj-autoproxy />
 
@@ -72,7 +92,7 @@
 	-->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dynamicDataSource"/>
 	</bean>
 
 	<!-- 5. 使用声明式事务

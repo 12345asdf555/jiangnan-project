@@ -5,12 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +24,7 @@ public class TaskThread extends Timer {
     private TaskThread timer = null;
     private TaskThread timer2 = null;
     private TaskThread timer3 = null;
-    private static final String connectUrl = "jdbc:mysql://localhost:3306/ciwjn?user=root&password=123&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+    private static final String connectUrl = "jdbc:mysql://10.38.3.30:3306/ciwjn?user=root&password=123&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
     //周期性线程池，处理实时数据分表的创建
     private static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
@@ -167,10 +165,10 @@ public class TaskThread extends Timer {
                     /**
                      * 待机数据每小时统计一次
                      */
-                    String rtdata_standby_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity),AVG(fvoltage),AVG(frateofflow),COUNT(fid)," +
+                    String rtdata_standby_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity) felectricity,AVG(fvoltage) fvoltage,AVG(frateofflow) frateofflow,COUNT(fid) fstandbytime," +
                             "'" + time3 + "','" + time2 + "',fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage,fwelder_itemid," +
-                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate),fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity),AVG(fwmin_electricity)," +
-                            "AVG(fwmax_voltage),AVG(fwmin_voltage),fstatus,fsolder_layer,fweld_bead " +
+                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate) fwirefeedrate,fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity) fwmax_electricity,AVG(fwmin_electricity) fwmin_electricity," +
+                            "AVG(fwmax_voltage) fwmax_voltage,AVG(fwmin_voltage) fwmin_voltage,fstatus,fsolder_layer,fweld_bead " +
                             "FROM " + nowTableName + " " +
                             "WHERE fstatus = '0' AND FWeldTime BETWEEN '" + timestandby + "' AND '" + time2 + "' GROUP BY fwelder_id,fgather_no,fjunction_id,fstatus," +
                             "fmachine_id,fsolder_layer,fweld_bead";
@@ -183,6 +181,15 @@ public class TaskThread extends Timer {
                             for (int i = 0; i < standbyMetaData.getColumnCount(); ++i) {
                                 String columnLable = standbyMetaData.getColumnLabel(i + 1);
                                 Object columnValue = standby_resultSet.getObject(columnLable);
+                                if (columnLable.equals(time3)){
+                                    columnLable = "fstarttime";
+                                }
+                                if (columnLable.equals(time2)){
+                                    columnLable = "fendtime";
+                                }
+                                if (columnValue == null || columnValue.equals("null")){
+                                    columnValue = 0;
+                                }
                                 //实体类赋值
                                 BeanUtils.setProperty(tbStandbyModel, columnLable, columnValue);
                             }
@@ -195,10 +202,10 @@ public class TaskThread extends Timer {
                     /**
                      * 焊接数据每小时统计一次
                      */
-                    String rtdata_work_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity),AVG(fvoltage),AVG(frateofflow),COUNT(fid)," +
+                    String rtdata_work_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity) felectricity,AVG(fvoltage) fvoltage,AVG(frateofflow) frateofflow,COUNT(fid) fworktime," +
                             "'" + time3 + "','" + time2 + "',fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage,fwelder_itemid," +
-                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate),fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity),AVG(fwmin_electricity)," +
-                            "AVG(fwmax_voltage),AVG(fwmin_voltage),fstatus,fsolder_layer,fweld_bead " +
+                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate) fwirefeedrate,fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity) fwmax_electricity,AVG(fwmin_electricity) fwmin_electricity," +
+                            "AVG(fwmax_voltage) fwmax_voltage,AVG(fwmin_voltage) fwmin_voltage,fstatus,fsolder_layer,fweld_bead " +
                             "FROM " + nowTableName + " " +
                             "WHERE (fstatus = '3' OR fstatus= '5' OR fstatus= '7' OR fstatus= '99') AND FWeldTime BETWEEN '" + timework + "' AND '" + time2 + "' " +
                             "GROUP BY fwelder_id,fgather_no,fjunction_id,fstatus,fmachine_id,fsolder_layer,fweld_bead";
@@ -211,23 +218,32 @@ public class TaskThread extends Timer {
                             for (int i = 0; i < workMetaData.getColumnCount(); ++i) {
                                 String columnLable = workMetaData.getColumnLabel(i + 1);
                                 Object columnValue = work_resultSet.getObject(columnLable);
+                                if (columnLable.equals(time3)){
+                                    columnLable = "fstarttime";
+                                }
+                                if (columnLable.equals(time2)){
+                                    columnLable = "fendtime";
+                                }
+                                if (columnValue == null || columnValue.equals("null")){
+                                    columnValue = 0;
+                                }
                                 //实体类赋值
                                 BeanUtils.setProperty(tbWorkModel, columnLable, columnValue);
                             }
                             //焊接数据插入到业务数据库
                             String tb_work_sql = getInsertSql("tb_work", TbWorkModel.class, tbWorkModel);
                             int i = mysqlStmt.executeUpdate(tb_work_sql);
-                            System.out.println("焊接数据统计sql--" + i + "-->tb_work_sql:" + tb_work_sql);
+                            //System.out.println("焊接数据统计sql--" + i + "-->tb_work_sql:" + tb_work_sql);
                         }
                     }
 
                     /**
                      * 故障数据每小时统计一次
                      */
-                    String rtdata_warn_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity),AVG(fvoltage),AVG(frateofflow),COUNT(fid)," +
+                    String rtdata_warn_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity) felectricity,AVG(fvoltage) fvoltage,AVG(frateofflow) frateofflow,COUNT(fid) fwarntime," +
                             "'" + time3 + "','" + time2 + "',fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage,fwelder_itemid," +
-                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate),fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity),AVG(fwmin_electricity)," +
-                            "AVG(fwmax_voltage),AVG(fwmin_voltage),fstatus,fsolder_layer,fweld_bead " +
+                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate) fwirefeedrate,fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity) fwmax_electricity,AVG(fwmin_electricity) fwmin_electricity," +
+                            "AVG(fwmax_voltage) fwmax_voltage,AVG(fwmin_voltage) fwmin_voltage,fstatus,fsolder_layer,fweld_bead " +
                             "FROM " + nowTableName + " WHERE fstatus != '0' AND fstatus != '3' AND fstatus != '5' " +
                             "AND fstatus != '7' AND FWeldTime BETWEEN '" + timewarn + "' AND '" + time2 + "' GROUP BY fwelder_id,fgather_no,fjunction_id,fstatus,fmachine_id," +
                             "fsolder_layer,fweld_bead";
@@ -240,6 +256,15 @@ public class TaskThread extends Timer {
                             for (int i = 0; i < warnMetaData.getColumnCount(); ++i) {
                                 String columnLable = warnMetaData.getColumnLabel(i + 1);
                                 Object columnValue = warn_resultSet.getObject(columnLable);
+                                if (columnLable.equals(time3)){
+                                    columnLable = "fstarttime";
+                                }
+                                if (columnLable.equals(time2)){
+                                    columnLable = "fendtime";
+                                }
+                                if (columnValue == null || columnValue.equals("null")){
+                                    columnValue = 0;
+                                }
                                 //实体类赋值
                                 BeanUtils.setProperty(tbWarnModel, columnLable, columnValue);
                             }
@@ -252,10 +277,10 @@ public class TaskThread extends Timer {
                     /**
                      * 超规范数据每小时统计一次
                      */
-                    String rtdata_alarm_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity),AVG(fvoltage),AVG(frateofflow),COUNT(fid)," +
+                    String rtdata_alarm_sql = "SELECT fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,AVG(felectricity) felectricity,AVG(fvoltage) fvoltage,AVG(frateofflow) frateofflow,COUNT(fid) falarmtime," +
                             "'" + time3 + "','" + time2 + "',fwelder_no,fjunction_no,fweld_no,fchannel,fmax_electricity,fmin_electricity,fmax_voltage,fmin_voltage,fwelder_itemid," +
-                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate),fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity),AVG(fwmin_electricity)," +
-                            "AVG(fwmax_voltage),AVG(fwmin_voltage),fstatus,fsolder_layer,fweld_bead " +
+                            "fjunction_itemid,fmachine_itemid,AVG(fwirefeedrate) fwirefeedrate,fmachinemodel,fwirediameter,fmaterialgas,AVG(fwmax_electricity) fwmax_electricity,AVG(fwmin_electricity) fwmin_electricity," +
+                            "AVG(fwmax_voltage) fwmax_voltage,AVG(fwmin_voltage) fwmin_voltage,fstatus,fsolder_layer,fweld_bead " +
                             "FROM " + nowTableName + " WHERE (fstatus= '98' OR fstatus= '99') " +
                             "AND FWeldTime BETWEEN '" + timealarm + "' AND '" + time2 + "' GROUP BY fwelder_id,fgather_no,fjunction_id,fstatus,fmachine_id,fsolder_layer," +
                             "fweld_bead";
@@ -268,6 +293,15 @@ public class TaskThread extends Timer {
                             for (int i = 0; i < alarmMetaData.getColumnCount(); ++i) {
                                 String columnLable = alarmMetaData.getColumnLabel(i + 1);
                                 Object columnValue = alarm_resultSet.getObject(columnLable);
+                                if (columnLable.equals(time3)){
+                                    columnLable = "fstarttime";
+                                }
+                                if (columnLable.equals(time2)){
+                                    columnLable = "fendtime";
+                                }
+                                if (columnValue == null || columnValue.equals("null")){
+                                    columnValue = 0;
+                                }
                                 //实体类赋值
                                 BeanUtils.setProperty(tbAlarmModel, columnLable, columnValue);
                             }

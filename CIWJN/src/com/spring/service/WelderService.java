@@ -1,10 +1,10 @@
 package com.spring.service;
 
-import java.math.BigInteger;
-import java.util.List;
-
 import com.spring.model.Welder;
 import com.spring.page.Page;
+
+import java.math.BigInteger;
+import java.util.List;
 
 public interface WelderService {
 	/**
@@ -39,4 +39,10 @@ public interface WelderService {
 	 * @return
 	 */
 	int getWeldernoCount(String wno);
+
+	/**
+	 * 查询所有焊工不分页
+	 * @return
+	 */
+	List<Welder> getWelderAllNoPage();
 }

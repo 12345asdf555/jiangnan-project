@@ -9,7 +9,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <head>
     <base href="<%=basePath%>">
     
-    <title>历史曲线</title>
+    <title>任务、焊工、焊机历史曲线</title>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">    
@@ -40,28 +40,28 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
 <body>
 	<div id="bodys" >
-		 <div class="functionleftdiv">历史曲线 >> 任务信息</div><br/>
+<%--		 <div class="functionleftdiv">历史曲线 >> 任务信息</div>--%>
 	   	 <div id="companyOverproof_btn">
-			<div style="margin-bottom: 5px;float:right">
-				<input  name="parent" id="parent" type="hidden" value="${parent }"/>
-				<input  name="afresh" id="afresh" type="hidden" value="${afreshLogin }"/>
-				<input  name="wjnos" id="wjno" type="hidden" value="${wjno }"/>
-				<input  name="welderid" id="welderid" type="hidden" value="${welderid }"/>
+			<div style="margin-bottom: 5px;margin-left: 50px;">
+				<input  name="parent" id="parent" type="hidden" value="${parent}"/>
+				<input  name="afresh" id="afresh" type="hidden" value="${afreshLogin}"/>
+				<input  name="wjnos" id="wjno" type="hidden" value="${wjno}"/>
+				<input  name="welderid" id="welderid" type="hidden" value="${welderid}"/>
+				<input  name="machineId" id="machineId" type="hidden" value="${machineId}"/>
 				时间：
-				<input class="easyui-datetimebox" name="dtoTime1" id="dtoTime1">--
+				<input class="easyui-datetimebox" name="dtoTime1" id="dtoTime1">-->
 				<input class="easyui-datetimebox" name="dtoTime2" id="dtoTime2">
 				<a href="javascript:serachCompanyOverproof();" class="easyui-linkbutton" iconCls="icon-select" >搜索</a>
 			</div>
 		</div>
 		<div id="dgtb" style="width:100%;height:100%;">
 			<table id="dg" style="table-layout:fixed;width:100%;"></table>
-<!-- 			<a href="javascript:fullScreen()" class="easyui-linkbutton" iconCls="icon-select" id="full" >全屏显示</a> -->
 		</div>
 		<div id="load" style="width:100%;height:42%;"></div>
-		<div id="elebody" style="position:absolute;top:60%;width:100%;height:25%;z-index:999;background:#fff;">
+		<div id="elebody" style="position:absolute;top:57%;width:100%;height:25%;z-index:999;background:#fff;">
 			<a href="javascript:fullScreen()" class="easyui-linkbutton" iconCls="icon-select" id="full">全屏显示</a>
 			<a href="javascript:theSmallScreen()" class="easyui-linkbutton" iconCls="icon-select" id="little">还原</a>
-			<div id="body1" style="position:absolute;top:23;width:100%;z-index:999;"></div>
+			<div id="body1" style="position:absolute;top:23px;width:100%;z-index:999;"></div>
 		</div>
 		<div id="body2" style="position:absolute;top:82%;width:100%;height:20%;z-index:999;"></div>
 	</div>

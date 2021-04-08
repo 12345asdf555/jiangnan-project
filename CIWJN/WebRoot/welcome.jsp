@@ -29,8 +29,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript" src="resources/js/getTime.js"></script>
 	<script type="text/javascript" src="resources/js/swfobject.js"></script>
 	<script type="text/javascript" src="resources/js/web_socket.js"></script>
+    <script type="text/javascript" src="resources/js/welcome/welcome.js"></script>
 	<script type="text/javascript" src="resources/js/welcome/online.js"></script>
-	<script type="text/javascript" src="resources/js/welcome/welcome.js"></script>
 	<script type="text/javascript" src="resources/js/paho-mqtt.js"></script>
 	<script type="text/javascript" src="resources/js/paho-mqtt-min.js"></script>
 	

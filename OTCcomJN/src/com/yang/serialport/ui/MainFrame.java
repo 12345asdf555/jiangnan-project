@@ -60,6 +60,8 @@ public class MainFrame extends JFrame {
     public HashMap<String, String> hm;
     public int wpscount = 1;
     public boolean timersign = true;
+    public static final String ipConfigPath = "OTCcomJN/IPconfig.txt";
+    //public static final String ipConfigPath = "IPconfig.txt";
 
     /**
      * 程序界面宽度
@@ -112,11 +114,9 @@ public class MainFrame extends JFrame {
     public void scheduleTimerTask() {
         //获取服务器IP地址以及组织机构号
         try {
-            File file = new File("OTCcomJN/IPconfig.txt");
-            //File file = new File("IPconfig.txt");
+            File file = new File(ipConfigPath);
             String filePath = file.getCanonicalPath();
             FileInputStream in = new FileInputStream(filePath);
-            //FileInputStream in = new FileInputStream("IPconfig.txt");
             InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
             BufferedReader bufReader = new BufferedReader(inReader);
             String line = null;
@@ -457,14 +457,18 @@ public class MainFrame extends JFrame {
             for (int i = 0; i < ary111.size(); i++) {
                 String str = ary111.getString(i);
                 JSONObject js = JSONObject.fromObject(str);
-                listweld.add(js.getString("GATHERID"));
-                listweld.add(js.getString("GATHERNO"));
-                listweld.add(js.getString("MACHINEID"));
-                listweld.add(js.getString("MACHINENO"));
+                listweld.add(js.getString("GATHERID"));//采集id
+                listweld.add(js.getString("GATHERNO"));//采集编号
+                listweld.add(js.getString("MACHINEID"));//焊机id
+                listweld.add(js.getString("MACHINENO"));//焊机编号
             }
             StaticClass.listweld = listweld;
 
             System.out.println("listarrayJN:" + StaticClass.listarrayJN);
+            //System.out.println("listweld:" + StaticClass.listweld);
+            //System.out.println("listwelder:" + StaticClass.listwelder);
+            //System.out.println("listjunction:" + StaticClass.listjunction);
+            System.out.println("socketlist:" + StaticClass.socketlist);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             dataView.append("Webservice未开启" + "\r\n");
@@ -618,7 +622,7 @@ public class MainFrame extends JFrame {
         public void run() {
             String ip = "";
             try {
-                FileInputStream in = new FileInputStream("IPconfig.txt");
+                FileInputStream in = new FileInputStream(ipConfigPath);
                 InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
                 BufferedReader bufReader = new BufferedReader(inReader);
                 String line = null;
@@ -822,7 +826,7 @@ public class MainFrame extends JFrame {
             try {
 
                 try {
-                    FileInputStream in = new FileInputStream("IPconfig.txt");
+                    FileInputStream in = new FileInputStream(ipConfigPath);
                     InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
                     BufferedReader bufReader = new BufferedReader(inReader);
                     String line = null;

@@ -1,18 +1,19 @@
 package com.spring.service.impl;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.PageHelper;
 import com.spring.dao.WeldedJunctionMapper;
 import com.spring.dto.WeldDto;
 import com.spring.model.WeldedJunction;
 import com.spring.page.Page;
 import com.spring.service.WeldedJunctionService;
+import com.spring.util.JNDateUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -52,9 +53,32 @@ public class WeldedJunctionServiceImpl implements WeldedJunctionService{
 	}
 	
 	@Override
-	public List<WeldedJunction> getJMByWelder(Page page, WeldDto dto, String welderid) {
+	public List<WeldedJunction> getJMByWelder(Page page, WeldDto dto, String welderNo) {
+		/**
+		 * 根据开始时间和结束时间去查询对应的数据库表
+		 */
+		List<WeldedJunction> list = new ArrayList<>();
+		List<WeldedJunction> jmByWelder = null;
 		PageHelper.startPage(page.getPageIndex(), page.getPageSize());
-		return wjm.getJMByWelder(dto,welderid);
+		try {
+			if (dto != null && dto.getDtoTime1() != null && dto.getDtoTime2() != null){
+				List<String> tableList = JNDateUtil.getRtDataTableList(dto.getDtoTime1(), dto.getDtoTime2());
+				if (null != tableList && tableList.size() > 0){
+					for (String tableName : tableList) {
+						if (null != tableName && tableName != ""){
+							dto.setRtDataTableName(tableName);
+							jmByWelder = wjm.getJMByWelder(dto, welderNo);
+							if (null != jmByWelder && jmByWelder.size() > 0){
+								list.addAll(jmByWelder);
+							}
+						}
+					}
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override

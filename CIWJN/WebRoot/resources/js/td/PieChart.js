@@ -85,8 +85,10 @@ $(function(){
 			   
 			//加载状态为complete时移除loading效果 
 			function completeLoading() {
-			        var loadingMask = document.getElementById('loadingDiv');  
-			        loadingMask.parentNode.removeChild(loadingMask);  
+				if (document.getElementById('loadingDiv')){
+					var loadingMask = document.getElementById('loadingDiv');
+					loadingMask.parentNode.removeChild(loadingMask);
+				}
 			}
 			setTimeout(function(){
 				if(symbol==0){

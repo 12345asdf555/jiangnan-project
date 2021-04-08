@@ -1,5 +1,5 @@
 /**
- * 焊工历史曲线
+ * 焊机历史曲线
  */
 $(function () {
     var width = $("#treeDiv").width();
@@ -27,7 +27,7 @@ $(function () {
         idField: 'id',
         pageSize: 10,
         pageList: [10, 20, 30, 40, 50],
-        url: "welders/getAllWelder",
+        url: "weldingMachine/getWedlingMachineList",
         singleSelect: true,
         rownumbers: true,
         showPageList: false,
@@ -40,41 +40,29 @@ $(function () {
             align: "left",
             hidden: true
         }, {
-            field: 'name',
-            title: '姓名',
-            width: 80,
-            halign: "center",
-            align: "left"
-        }, {
-            field: 'welderno',
-            title: '焊工编号',
+            field: 'equipmentNo',
+            title: '焊机编号',
             width: 100,
             halign: "center",
             align: "left"
         }, {
-            field: 'cardnum',
-            title: '卡号',
+            field : 'typeName',
+            title : '设备类型',
             width: 100,
-            halign: "center",
-            align: "left"
+            halign : "center",
+            align : "left"
         }, {
-            field: 'quali',
-            title: '资质id',
-            halign: "center",
-            align: "left",
-            hidden: true
-        }, {
-            field: 'owner',
-            title: '部门id',
-            halign: "center",
-            align: "left",
-            hidden: true
-        }, {
-            field: 'ownername',
-            title: '部门',
+            field : 'insframeworkName',
+            title : '所属组织',
             width: 100,
-            halign: "center",
-            align: "left"
+            halign : "center",
+            align : "left"
+        }, {
+            field : 'modelname',
+            title : '设备型号',
+            width: 100,
+            halign : "center",
+            align : "left"
         }, {
             field: 'edit',
             title: '操作',
@@ -83,7 +71,7 @@ $(function () {
             align: "left",
             formatter: function (value, row, index) {
                 var str = "";
-                str += '<a id="wj" class="easyui-linkbutton" href="weldedjunction/getWeldJun?fid=' + row.welderno + '"/>';
+                str += '<a id="wj" class="easyui-linkbutton" href="weldedjunction/getWeldJun?machineId=' + row.id + '"/>';
                 return str;
             }
         }]],
@@ -96,7 +84,7 @@ $(function () {
             }
         },
         onLoadSuccess: function (data) {
-            $("a[id='wj']").linkbutton({text: '焊工曲线', plain: true, iconCls: 'icon-search'});
+            $("a[id='wj']").linkbutton({text: '焊机曲线', plain: true, iconCls: 'icon-search'});
         }
     });
 });

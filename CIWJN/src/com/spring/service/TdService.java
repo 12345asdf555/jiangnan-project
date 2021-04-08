@@ -1,10 +1,10 @@
 package com.spring.service;
 
+import com.spring.model.Td;
+import com.spring.page.Page;
+
 import java.math.BigInteger;
 import java.util.List;
-
-import com.spring.page.Page;
-import com.spring.model.Td;
 
 public interface TdService {
 
@@ -29,5 +29,9 @@ public interface TdService {
 	 * @return
 	 */
 	Td getLiveTime(String time,BigInteger machineid);
-	String getBootTime(String time,BigInteger machineId);
+	String getBootTime(String time,BigInteger machineId,String nowTableName,String orderType);
+
+	//实时数据表中查询最新的任务id
+	String getJunctionIdByRtdata(BigInteger machineId,String startTime,String tableName);
+
 }

@@ -47,11 +47,9 @@ public class NettyClientHandler {
                 final TcpClientHandler handler = new TcpClientHandler(this);
 
                 try {
-                    File file = new File("OTCcomJN/IPconfig.txt");
-                    //File file = new File("IPconfig.txt");
+                    File file = new File(MainFrame.ipConfigPath);
                     String filePath = file.getCanonicalPath();
                     FileInputStream in = new FileInputStream(filePath);
-                    //FileInputStream in = new FileInputStream("IPconfig.txt");
                     InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
                     BufferedReader bufReader = new BufferedReader(inReader);
                     String line = null;

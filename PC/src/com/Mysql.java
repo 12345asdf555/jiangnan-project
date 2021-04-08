@@ -36,10 +36,10 @@ public class Mysql {
             String check11 = str.substring(282, 284);
             if (check1.equals("7E") && check11.equals("7D")) {
 
-                long welderid = 0000;
-                long weldid = 0000;
-                long gatherid = 0000;//采集id
-                long itemid = 00;
+                long welderid = 0;
+                long weldid = 0;  //焊机id
+                long gatherid = 0;//采集id
+                long itemid = 0;
 
                 if (isInteger(str.substring(34, 38))) {
                     welderid = Integer.valueOf(str.substring(34, 38));
@@ -56,12 +56,6 @@ public class Mysql {
                 }
                 String weldmodel = Integer.valueOf(str.subSequence(12, 14).toString(), 16).toString();
                 for (int a = 0; a < 161; a += 80) {
-                    long junctionid = 0;
-                    if (isInteger(str.substring(70 + a, 78 + a))){
-                        junctionid = Integer.valueOf(str.substring(70 + a, 78 + a));
-                    }
-                    BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(50 + a, 54 + a).toString(), 16));
-                    BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(54 + a, 58 + a).toString(), 16));
                     int status = Integer.parseInt(str.subSequence(78 + a, 80 + a).toString(), 16);
                     BigDecimal fwirefeedrate = new BigDecimal(Integer.valueOf(str.subSequence(58 + a, 62 + a).toString(), 16));
                     String year = Integer.valueOf(str.subSequence(38 + a, 40 + a).toString(), 16).toString();
@@ -71,17 +65,16 @@ public class Mysql {
                     String minute = Integer.valueOf(str.subSequence(46 + a, 48 + a).toString(), 16).toString();
                     String second = Integer.valueOf(str.subSequence(48 + a, 50 + a).toString(), 16).toString();
                     String strdate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-
                     try {
                         time = DateTools.parse("yy-MM-dd HH:mm:ss", strdate);
                         timesql = new Timestamp(time.getTime());
                     } catch (ParseException e) {
-                        // TODO Auto-generated catch block
-                        //e.printStackTrace();
+                        e.printStackTrace();
                     }
 
+                    BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(50 + a, 54 + a).toString(), 16));
+                    BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(54 + a, 58 + a).toString(), 16));
                     int channel = Integer.valueOf(str.subSequence(100 + a, 102 + a).toString(), 16);
-
                     //焊接电流电压上下限
                     BigDecimal maxelectricity = new BigDecimal((Integer.valueOf(str.subSequence(84 + a, 88 + a).toString(), 16).intValue()) + (Integer.valueOf(str.subSequence(92 + a, 94 + a).toString(), 16).intValue()));
                     BigDecimal minelectricity = null;
@@ -101,13 +94,16 @@ public class Mysql {
                     //BigDecimal minvoltage = new BigDecimal((Integer.valueOf(str.subSequence(88+a, 92+a).toString(),16).intValue())-(Integer.valueOf(str.subSequence(94+a, 96+a).toString(),16).intValue()));
 
                     //报警电流电压上下限wmaxvoltage
-                    BigDecimal wmaxelectricity = new BigDecimal(Integer.valueOf(str.subSequence(102 + a, 106 + a).toString(), 16).intValue());
-                    BigDecimal wmaxvoltage = new BigDecimal(Integer.valueOf(str.subSequence(106 + a, 110 + a).toString(), 16).intValue());
-                    BigDecimal wminelectricity = new BigDecimal(Integer.valueOf(str.subSequence(110 + a, 114 + a).toString(), 16).intValue());
-                    BigDecimal wminvoltage = new BigDecimal(Integer.valueOf(str.subSequence(114 + a, 118 + a).toString(), 16).intValue());
-
+                    BigDecimal wmaxelectricity = new BigDecimal(Integer.valueOf(str.substring(102 + a, 106 + a), 16).intValue());
+                    BigDecimal wmaxvoltage = new BigDecimal(Integer.valueOf(str.substring(106 + a, 110 + a), 16).intValue());
+                    BigDecimal wminelectricity = new BigDecimal(Integer.valueOf(str.substring(110 + a, 114 + a), 16).intValue());
+                    BigDecimal wminvoltage = new BigDecimal(Integer.valueOf(str.substring(114 + a, 118 + a), 16).intValue());
+                    long junctionid = 0;
+                    if (isInteger(str.substring(70 + a, 78 + a))){
+                        junctionid = Integer.parseInt(str.substring(70 + a, 78 + a));
+                    }
                     BigDecimal fwirediameter = new BigDecimal(Integer.valueOf(str.subSequence(80 + a, 82 + a).toString(), 16));
-                    int fmaterialgas = Integer.parseInt(str.subSequence(82 + a, 84 + a).toString(), 16);
+                    int fmaterialgas = Integer.parseInt(str.substring(82 + a, 84 + a).toString(), 16);
 
                     db.DB_Connectionmysqlrun(welderid, weldid, gatherid, itemid, weldid, weldmodel, junctionid, electricity, voltage, status, fwirefeedrate, timesql, channel, maxelectricity, minelectricity, maxvoltage, minvoltage, fwirediameter, fmaterialgas, listarray1, listarray2, listarray3, wmaxelectricity, wminelectricity, wmaxvoltage, wminvoltage);
 

@@ -46,7 +46,7 @@
         SELECT j.fid,
                j.fwelded_junction_no,
                j.fserial_no,
-               j.foperator         fwelderid,
+               j.fdyne         fwelderid,
                w.fwelder_no        fpipeline_no,
                w.fname             froom_no,
                r.fmachineid,
@@ -64,7 +64,7 @@
         FROM tb_welded_junction j
                  LEFT JOIN tb_taskresult r ON r.ftaskid = j.fid
                  INNER JOIN tb_insframework i ON j.fitemId = i.fid
-                 LEFT JOIN tb_welder w ON j.foperator = w.fid
+                 LEFT JOIN tb_welder w ON j.fdyne = w.fid
                  LEFT JOIN tb_welder ww ON r.fwelderid = ww.fid
                  LEFT JOIN tb_welding_machine m ON r.fmachineid = m.fid
         WHERE 1 = 1

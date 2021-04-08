@@ -11,7 +11,9 @@
 	</resultMap>
 	
 	<select id="getWelderAll" resultMap="dMap" parameterType="java.lang.String">
-		SELECT w.fid,w.fwelder_no,w.fname,i.fname iname FROM tb_welder w INNER JOIN tb_insframework i on i.fid = w.fItemID where 1=1
+		SELECT w.fid,w.fwelder_no,w.fname,i.fname iname
+		FROM tb_welder w INNER JOIN tb_insframework i on i.fid = w.Fowner
+		where 1=1
 		<if test="str!=null and str!=''">
 			and ${str}
 		</if>

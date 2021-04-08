@@ -1,11 +1,10 @@
 package com.spring.dao;
 
-import java.math.BigInteger;
-import java.util.List;
-
+import com.spring.model.Td;
 import org.apache.ibatis.annotations.Param;
 
-import com.spring.model.Td;
+import java.math.BigInteger;
+import java.util.List;
 
 public interface TdMapper {
 	List<Td> findAll(@Param("str")String str);
@@ -23,5 +22,9 @@ public interface TdMapper {
 	List<Td> findMachine(String fposition);
 	
 	Td getLiveTime(@Param("time")String time,@Param("machineid")BigInteger machineid);
-	String getBootTime(@Param("time")String time,@Param("machineId")BigInteger machineId);
+	String getBootTime(@Param("time")String time,@Param("machineId")BigInteger machineId,
+					   @Param("nowTableName") String nowTableName, @Param("orderType") String orderType);
+
+	String getJunctionIdByRtdata(@Param("machineId")BigInteger machineId,@Param("startTime") String startTime,
+									 @Param("tableName") String tableName);
 }

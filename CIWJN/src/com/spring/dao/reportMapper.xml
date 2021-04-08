@@ -200,16 +200,23 @@
 	</select>
 	
 	<select id="historyData" resultType="Report">
-		SELECT `felectricity` fstandardele,`fvoltage` fstandardvol,`FWeldTime` fweldingtime,`fstatus` fstatus FROM `tb_live_data` WHERE fjunction_no=#{fid} and fmachine_id=#{mach} and fstatus='3'
+		SELECT felectricity fstandardele,fvoltage fstandardvol,FWeldTime fweldingtime,fstatus fstatus
+		FROM ${dto.rtDataTableName} WHERE fstatus='3'
+		<if test="fid!=null and fid!=''">
+			and fjunction_no = #{fid}
+		</if>
+		<if test="mach!=null">
+			and fmachine_id = #{mach}
+		</if>
 		<if test="welderid!=null and welderid!=''">
-			and `fwelder_no`=#{welderid}
+			and fwelder_no=#{welderid}
 		</if>
 		<if test="dto!=null and dto!=''">
 			<if test="dto.dtoTime1!=null and dto.dtoTime1!=''">
-				and fweldtime &gt;= #{dto.dtoTime1}
+				and fweldtime between #{dto.dtoTime1}
 			</if>
 			<if test="dto.dtoTime2!=null and dto.dtoTime2!=''">
-				and fweldtime &lt;= #{dto.dtoTime2}
+				and #{dto.dtoTime2}
 			</if>
 		</if>
 	</select>

@@ -1,14 +1,12 @@
 package com.spring.dao;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.spring.dto.WeldDto;
 import com.spring.model.WeldedJunction;
-
+import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
+
+import java.math.BigInteger;
+import java.util.List;
 
 public interface WeldedJunctionMapper extends Mapper<WeldedJunction>{
 	List<WeldedJunction> getWeldedJunctionAll(@Param("str")String str);
@@ -27,7 +25,7 @@ public interface WeldedJunctionMapper extends Mapper<WeldedJunction>{
 	
 	int getWeldedjunctionByNo(@Param("wjno")String wjno);
 	
-	List<WeldedJunction> getJMByWelder(@Param("dto") WeldDto dto,@Param("welderid")String welderid);
+	List<WeldedJunction> getJMByWelder(@Param("dto") WeldDto dto,@Param("welderNo")String welderNo);
 	
 	String getFirsttime(@Param("dto") WeldDto dto,@Param("machineid")BigInteger machineid, @Param("welderid")String welderid, @Param("junid")String junid);
 	

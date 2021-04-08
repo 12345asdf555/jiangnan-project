@@ -1,20 +1,5 @@
 package com.yang.serialport.ui;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-
-import org.datacontract.schemas._2004._07.jn_weld_service.CompositeType;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.tempuri.WeldServiceStub;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -22,8 +7,18 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoop;
 import io.netty.channel.socket.SocketChannel;
+import org.datacontract.schemas._2004._07.jn_weld_service.CompositeType;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.tempuri.WeldServiceStub;
 import service.weld.jn.ServiceCall;
 import service.weld.jn.ServiceCallResponse;
+
+import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 public class TcpClientHandler extends ChannelHandlerAdapter {
 
@@ -364,11 +359,9 @@ public class TcpClientHandler extends ChannelHandlerAdapter {
 
     private void readConfig() {
         try {
-            File file = new File("OTCcomJN/IPconfig.txt");
-            //File file = new File("IPconfig.txt");
+            File file = new File(MainFrame.ipConfigPath);
             String filePath = file.getCanonicalPath();
             FileInputStream in = new FileInputStream(filePath);
-            //FileInputStream in = new FileInputStream("IPconfig.txt");
             InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
             BufferedReader bufReader = new BufferedReader(inReader);
             String line = null;

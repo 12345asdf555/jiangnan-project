@@ -8,21 +8,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <html>
   <head>
     <base href="<%=basePath%>">
-    
+
     <title>实时界面</title>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="expires" content="0">
 	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
 	<meta http-equiv="description" content="This is my page">
-	
+
 	<link rel="stylesheet" type="text/css" href="resources/css/main.css">
 	<link rel="stylesheet" type="text/css" href="resources/themes/icon.css" />
 	<link rel="stylesheet" type="text/css" href="resources/themes/default/easyui.css" />
 	<link rel="stylesheet" type="text/css" href="resources/css/base.css" />
 	<link rel="stylesheet" type="text/css" href="resources/css/iconfont.css">
-	
-<%--	<script type="text/javascript" src="resources/js/loading.js"></script>--%>
+
+	<script type="text/javascript" src="resources/js/loading.js"></script>
 	<script type="text/javascript" src="resources/js/jquery.min.js"></script>
 	<script type="text/javascript" src="resources/js/jquery.easyui.min.js"></script>
 	<script type="text/javascript" src="resources/js/easyui-lang-zh_CN.js"></script>
@@ -58,17 +58,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			text-align:left;
 		}
 		.tdinput input{
-			width:100px;
+			width:200px;
+			height: 80%;
 		}
 	</style>
   </head>
-  
+
 <body class="easyui-layout" style="overflow:auto;">
-	<input  id="machineid" type="hidden" value="${value }"/>
-	<input id="type" type="hidden" value="${type }"/>
-	<input id="machinemodel" type="hidden" value="${model }"/>
-	<input id="manufacture" type="hidden" value="${manufacture }"/>
-	<input name="afresh" id="afresh" type="hidden" value="${afreshLogin }"/>
+	<input id="machineid" type="hidden" value="${machineId}"/>
+	<input id="type" type="hidden" value="${type}"/>
+	<input id="machinemodel" type="hidden" value="${model}"/>
+	<input id="manufacture" type="hidden" value="${manufacture}"/>
+	<input name="afresh" id="afresh" type="hidden" value="${afreshLogin}"/>
+	<input name="junctionNo" id="junctionNo" type="hidden" value="${junctionNo}"/>
 	<div style="float:left; width:100%;height:30px;background-color: #474960;color:#ffffff;font-size:14px;line-height:30px;">
 		<div style="float:left;">设备运行参数监控</div>
 		<div style="float:right;"><a href="td/AllTd"><img src="resources/images/history.png" style="height:30px;width:40px;padding-top:3px;"></a></div>
@@ -123,20 +125,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<table>
 				<tr>
 					<td>开机时间：</td>
-					<td class="tdinput"><input class="easyui-textbox" id="r1" readonly="readonly" value="${time}"/></td>
+					<td class="tdinput"><input class="easyui-textbox" id="r1" readonly="readonly" value="${starttime}"/></td>
 				</tr>
- 				<tr>
+				<tr>
 					<td>关机时间：</td>
-					<td class="tdinput"><input class="easyui-textbox" id="r2" readonly="readonly" value="--"/></td>
+					<td class="tdinput"><input class="easyui-textbox" id="r2" readonly="readonly" value="${endtime}"/></td>
 				</tr>
-<!--				<tr>
-					<td>工作时长：</td>
-					<td class="tdinput"><input class="easyui-textbox" id="r3" readonly="readonly" value="00:00:00"/></td>
-				</tr> -->
 				<tr>
 					<td>焊接时长：</td>
 					<td class="tdinput"><input class="easyui-textbox" id="r4" readonly="readonly" value="00:00:00"/></td>
-				</tr> 
+				</tr>
 				<tr>
 					<td>通道总数：</td>
 					<td class="tdinput"><input class="easyui-textbox" id="r5" readonly="readonly"/></td>
