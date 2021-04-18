@@ -61,7 +61,7 @@ public class MainFrame extends JFrame {
     public int wpscount = 1;
     public boolean timersign = true;
     public static final String ipConfigPath = "OTCcomJN/IPconfig.txt";
-    //public static final String ipConfigPath = "IPconfig.txt";
+//    public static final String ipConfigPath = "IPconfig.txt";
 
     /**
      * 程序界面宽度
@@ -557,9 +557,9 @@ public class MainFrame extends JFrame {
 
     //开启服务器供焊机连接
     private Runnable work = new Runnable() {
+        final EventLoopGroup bossGroup = new NioEventLoopGroup();
+        final EventLoopGroup workerGroup = new NioEventLoopGroup();
         public void run() {
-            EventLoopGroup bossGroup = new NioEventLoopGroup();
-            EventLoopGroup workerGroup = new NioEventLoopGroup();
             try {
                 ServerBootstrap b = new ServerBootstrap();
                 b.group(bossGroup, workerGroup)
@@ -614,7 +614,6 @@ public class MainFrame extends JFrame {
             }
         }
     };
-
 
     //松下实时数据获取
     public Runnable pan = new Runnable() {

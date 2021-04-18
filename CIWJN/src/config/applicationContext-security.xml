@@ -63,29 +63,29 @@
         </authentication-provider>  
     </authentication-manager>  
     
-    <!-- 配置数据源信息  -->
+    <!-- 1.配置数据源信息  -->
      <beans:bean id="securityDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
          <beans:property name="driverClass" value="${db.driverClass}"/>
          <beans:property name="jdbcUrl" value="${db.jdbcUrl}"/>
          <beans:property name="user" value="${db.user}"/>
          <beans:property name="password" value="${db.password}"/>
          <!-- 连接池最大数量 -->
-	     <beans:property name="maxPoolSize" value="100"/>
+	     <beans:property name="maxPoolSize" value="200"/>
 	     <!-- 获取连接最大等待时间 -->
 	     <beans:property name="maxIdleTime" value="180"/>
      </beans:bean>
 
-    <!-- 配置数据源信息  -->
-     <beans:bean id="securityDataSourceRt" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-         <beans:property name="driverClass" value="${rtdb.driverClass}"/>
-         <beans:property name="jdbcUrl" value="${rtdb.jdbcUrl}"/>
-         <beans:property name="user" value="${rtdb.user}"/>
-         <beans:property name="password" value="${rtdb.password}"/>
-         <!-- 连接池最大数量 -->
-	     <beans:property name="maxPoolSize" value="100"/>
-	     <!-- 获取连接最大等待时间 -->
-	     <beans:property name="maxIdleTime" value="180"/>
-     </beans:bean>
+    <!-- 2.配置数据源信息  -->
+    <beans:bean id="securityDataSourceRt" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <beans:property name="driverClass" value="${rtdb.driverClass}"/>
+        <beans:property name="jdbcUrl" value="${rtdb.jdbcUrl}"/>
+        <beans:property name="user" value="${rtdb.user}"/>
+        <beans:property name="password" value="${rtdb.password}"/>
+        <!-- 连接池最大数量 -->
+        <beans:property name="maxPoolSize" value="200"/>
+        <!-- 获取连接最大等待时间 -->
+        <beans:property name="maxIdleTime" value="180"/>
+    </beans:bean>
      
      <beans:bean id="myUserDetailService" class="com.erdangjiade.spring.security.MyUserDetailService" />
      

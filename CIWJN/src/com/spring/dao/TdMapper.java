@@ -25,6 +25,6 @@ public interface TdMapper {
 	String getBootTime(@Param("time")String time,@Param("machineId")BigInteger machineId,
 					   @Param("nowTableName") String nowTableName, @Param("orderType") String orderType);
 
-	String getJunctionIdByRtdata(@Param("machineId")BigInteger machineId,@Param("startTime") String startTime,
+	Td getJunctionIdByRtdata(@Param("machineId")BigInteger machineId,@Param("startTime") String startTime,
 									 @Param("tableName") String tableName);
 }

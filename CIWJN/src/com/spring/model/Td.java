@@ -24,6 +24,12 @@ public class Td {
 	private double time;
 	private double worktime;
 	private int typeid;
+
+	private String startTime;
+	private String endTime;
+	private String fjunction_no;
+
+
 	public Td(){
 		super();
 	}
@@ -166,10 +172,35 @@ public class Td {
 	public void setTypeid(int typeid) {
 		this.typeid = typeid;
 	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getFjunction_no() {
+		return fjunction_no;
+	}
+
+	public void setFjunction_no(String fjunction_no) {
+		this.fjunction_no = fjunction_no;
+	}
+
 	public Td(int id, double electricity, double voltage, String fposition, String fwelder_no, String fname,
-			String fstatus_id, String fequipment_no, String finsframework_id, int fpt, int fpi, int fpp, String fpn,
-			int fdt, int fdp, int fdi, String fdn, int fci, int fct, String fcn, double time, double worktime,
-			int typeid) {
+			  String fstatus_id, String fequipment_no, String finsframework_id, int fpt, int fpi, int fpp, String fpn,
+			  int fdt, int fdp, int fdi, String fdn, int fci, int fct, String fcn, double time, double worktime,
+			  int typeid) {
 		super();
 		this.id = id;
 		this.electricity = electricity;

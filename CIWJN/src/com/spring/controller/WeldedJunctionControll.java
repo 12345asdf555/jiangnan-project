@@ -360,6 +360,22 @@ public class WeldedJunctionControll {
         return data + "";
     }
 
+    @RequestMapping("/getAllInfoNoPage")
+    @ResponseBody
+    public String getAllInfoNoPage(HttpServletRequest request) {
+        //查询所有焊机，不分页
+        List<WeldingMachine> machineList = wmm.getWeldingMachineAllNoPage(null, null);
+        //查询所有任务不分页
+        List<WeldedJunction> junctionList = wjm.getWeldedJunctionAll(null);
+        //查询所有焊工不分页
+        List<Welder> welderList = welderService.getWelderAllNoPage();
+        JSONObject obj = new JSONObject();
+        obj.put("machineList", machineList);
+        obj.put("junctionList", junctionList);
+        obj.put("welderList", welderList);
+        return obj.toString();
+    }
+
     @RequestMapping("/getWeldingJun")
     @ResponseBody
     public String getWeldingJun(HttpServletRequest request) {
@@ -434,7 +450,7 @@ public class WeldedJunctionControll {
                 json.put("machid", w.getMachid());//焊机id
                 json.put("fjunctionId", w.getFjunctionId());//任务id
                 if (w.getMachid() != null && (!w.getMachid().equals(BigInteger.ZERO))) {
-                    if (null != machineList && machineList.size()>0){
+                    if (null != machineList && machineList.size() > 0) {
                         for (WeldingMachine machine : machineList) {
                             if (w.getMachid().equals(machine.getId())) {
                                 machineNo = machine.getEquipmentNo(); //焊机编号
@@ -445,7 +461,7 @@ public class WeldedJunctionControll {
                 }
                 json.put("machine_num", machineNo);//焊机编号
                 if (w.getFjunctionId() != null && (!w.getFjunctionId().equals(BigInteger.ZERO))) {
-                    if (null != junctionList && junctionList.size() > 0){
+                    if (null != junctionList && junctionList.size() > 0) {
                         for (WeldedJunction junction : junctionList) {
                             if (w.getFjunctionId().equals(junction.getId())) {
                                 weldedJunctionno = junction.getWeldedJunctionno();
@@ -455,10 +471,10 @@ public class WeldedJunctionControll {
                     }
                 }
                 json.put("weldedJunctionno", weldedJunctionno);//焊缝、任务编号
-                if (w.getFwelderId() != null && (!w.getFwelderId().equals(BigInteger.ZERO))){
-                    if (null != welderList && welderList.size() > 0){
+                if (w.getFwelderId() != null && (!w.getFwelderId().equals(BigInteger.ZERO))) {
+                    if (null != welderList && welderList.size() > 0) {
                         for (Welder welder : welderList) {
-                            if (w.getFwelderId().equals(welder.getId())){
+                            if (w.getFwelderId().equals(welder.getId())) {
                                 welderName = welder.getName();
                                 break;
                             }

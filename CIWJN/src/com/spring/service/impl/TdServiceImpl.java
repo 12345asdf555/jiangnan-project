@@ -85,7 +85,7 @@ public class TdServiceImpl implements TdService {
     }
 
     @Override
-    public String getJunctionIdByRtdata(BigInteger machineId, String startTime, String tableName) {
+    public Td getJunctionIdByRtdata(BigInteger machineId, String startTime, String tableName) {
         return mapper.getJunctionIdByRtdata(machineId, startTime, tableName);
     }
 }

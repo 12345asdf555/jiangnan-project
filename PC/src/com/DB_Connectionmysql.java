@@ -48,8 +48,13 @@ public class DB_Connectionmysql {
     public String inSqlbase2 = "";
     public String inSqlbase3 = "";
     public String inSqlbase4 = "";
+    private String insertTemporarySql1 = "";
+    private String insertTemporarySql2 = "";
+    private String insertTemporarySql3 = "";
+    private String insertTemporarySql4 = "";
 
-    public static String inSqlbase = "";
+    public static String inSqlbase = "";//实时数据sql
+    public static String inSqlTemporary = "";//临时数据sql
 
     public static String insertrtDataSql(String rtDataTableName) {
         String sql = "insert into " + rtDataTableName + "(fwelder_id,fgather_no,fmachine_id,fjunction_id,fitemid,felectricity,fvoltage,fstatus," +
@@ -72,13 +77,12 @@ public class DB_Connectionmysql {
         public SqlWorkInsert(String sql) {
             this.sql = sql;
         }
-
+        Connection connection = null;
+        Statement statement = null;
         @Override
         public void run() {
             synchronized (sql) {
                 if (null != sql && !"".equals(sql)) {
-                    Connection connection = null;
-                    Statement statement = null;
                     try {
                         connection = LiveDataDBConnection.getConnection();
                         statement = connection.createStatement();
@@ -108,6 +112,9 @@ public class DB_Connectionmysql {
 
         if (null == inSqlbase || "".equals(inSqlbase)) {
             inSqlbase = insertrtDataSql(TaskThread.getNowTableName());
+        }
+        if (null == inSqlTemporary || "".equals(inSqlTemporary)) {
+            inSqlTemporary = insertrtDataSql("tb_temporary");
         }
 
         if (weldstatus == 0) {     //焊层焊道不为停止
@@ -161,21 +168,24 @@ public class DB_Connectionmysql {
 
                     if (countbase1 == 1) {
                         inSqlbase1 = inSqlbase + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage1 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage1 + "','" + minvoltage1 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage1 + "','" + wminvoltage1 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql1 = inSqlTemporary + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage1 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage1 + "','" + minvoltage1 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage1 + "','" + wminvoltage1 + "','" + ceng + "','" + dao + "')";
                     } else {
                         inSqlbase1 = inSqlbase1 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage1 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage1 + "','" + minvoltage1 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage1 + "','" + wminvoltage1 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql1 = insertTemporarySql1 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage1 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage1 + "','" + minvoltage1 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage1 + "','" + wminvoltage1 + "','" + ceng + "','" + dao + "')";
                     }
-
 
                     countbase1++;
 
                     if (countbase1 >= 100) {
                         executeSQL(inSqlbase1);
+                        executeSQL(insertTemporarySql1);
                         workbase = workbase + 1;
                         if (workbase == 5) {
                             workbase = 1;
                         }
                         countbase1 = 1;
                         inSqlbase1 = "";
+                        insertTemporarySql1 = "";
                     }
                     break;
                 case 2:
@@ -224,20 +234,24 @@ public class DB_Connectionmysql {
 
                     if (countbase2 == 1) {
                         inSqlbase2 = inSqlbase + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage2 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage2 + "','" + minvoltage2 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage2 + "','" + wminvoltage2 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql2 = inSqlTemporary + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage2 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage2 + "','" + minvoltage2 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage2 + "','" + wminvoltage2 + "','" + ceng + "','" + dao + "')";
                     } else {
                         inSqlbase2 = inSqlbase2 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage2 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage2 + "','" + minvoltage2 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage2 + "','" + wminvoltage2 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql2 = insertTemporarySql2 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage2 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage2 + "','" + minvoltage2 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage2 + "','" + wminvoltage2 + "','" + ceng + "','" + dao + "')";
                     }
 
                     countbase2++;
 
                     if (countbase2 >= 100) {
                         executeSQL(inSqlbase2);
+                        executeSQL(insertTemporarySql2);
                         workbase = workbase + 1;
                         if (workbase == 5) {
                             workbase = 1;
                         }
                         countbase2 = 1;
                         inSqlbase2 = "";
+                        insertTemporarySql2 = "";
                     }
                     break;
                 case 3:
@@ -283,20 +297,24 @@ public class DB_Connectionmysql {
 
                     if (countbase3 == 1) {
                         inSqlbase3 = inSqlbase + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage3 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage3 + "','" + minvoltage3 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage3 + "','" + wminvoltage3 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql3 = inSqlTemporary + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage3 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage3 + "','" + minvoltage3 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage3 + "','" + wminvoltage3 + "','" + ceng + "','" + dao + "')";
                     } else {
                         inSqlbase3 = inSqlbase3 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage3 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage3 + "','" + minvoltage3 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage3 + "','" + wminvoltage3 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql3 = insertTemporarySql3 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage3 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage3 + "','" + minvoltage3 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage3 + "','" + wminvoltage3 + "','" + ceng + "','" + dao + "')";
                     }
 
                     countbase3++;
 
                     if (countbase3 >= 100) {
                         executeSQL(inSqlbase3);
+                        executeSQL(insertTemporarySql3);
                         workbase = workbase + 1;
                         if (workbase == 5) {
                             workbase = 1;
                         }
                         countbase3 = 1;
                         inSqlbase3 = "";
+                        insertTemporarySql3 = "";
                     }
                     break;
                 case 4:
@@ -342,20 +360,24 @@ public class DB_Connectionmysql {
 
                     if (countbase4 == 1) {
                         inSqlbase4 = inSqlbase + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage4 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage4 + "','" + minvoltage4 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage4 + "','" + wminvoltage4 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql4 = inSqlTemporary + "('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage4 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage4 + "','" + minvoltage4 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage4 + "','" + wminvoltage4 + "','" + ceng + "','" + dao + "')";
                     } else {
                         inSqlbase4 = inSqlbase4 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage4 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage4 + "','" + minvoltage4 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage4 + "','" + wminvoltage4 + "','" + ceng + "','" + dao + "')";
+                        insertTemporarySql4 = insertTemporarySql4 + ",('" + welderid + "','" + gathernum + "','" + weldid + "','" + junctionid + "','" + itemid + "','" + electricity + "','" + voltage4 + "','" + status + "','" + fwirefeedrate + "','" + goodsC_date + "','" + timesql + "','" + weldernum + "','" + junctionnum + "','" + weldnum + "','" + channel + "','" + maxelectricity + "','" + minelectricity + "','" + maxvoltage4 + "','" + minvoltage4 + "','" + welderins + "','" + junctionins + "','" + ins + "','" + weldmodel + "','" + fwirediameter + "','" + fmaterialgas + "','" + wmaxelectricity + "','" + wminelectricity + "','" + wmaxvoltage4 + "','" + wminvoltage4 + "','" + ceng + "','" + dao + "')";
                     }
 
                     countbase4++;
 
                     if (countbase4 >= 100) {
                         executeSQL(inSqlbase4);
+                        executeSQL(insertTemporarySql4);
                         workbase = workbase + 1;
                         if (workbase == 5) {
                             workbase = 1;
                         }
                         countbase4 = 1;
                         inSqlbase4 = "";
+                        insertTemporarySql4 = "";
                     }
                     break;
             }

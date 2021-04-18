@@ -612,7 +612,7 @@ public class ReportController {
         if (iutil.isNull(time2)) {
             dto.setDtoTime2(time2);
         }
-        dto.setRtDataTableName("rtdata2021_04_05_2021_04_11");
+        //dto.setRtDataTableName("rtdata2021_04_05_2021_04_11");
         String fid = request.getParameter("fid");//任务编号
         BigInteger mach = new BigInteger(request.getParameter("mach"));//焊机id
         String welderid = request.getParameter("welderid");//焊工编号

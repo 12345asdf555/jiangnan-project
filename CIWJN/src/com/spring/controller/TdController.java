@@ -4,7 +4,6 @@ import com.erdangjiade.spring.security.CustomerContextHolder;
 import com.spring.model.*;
 import com.spring.service.*;
 import com.spring.util.IsnullUtil;
-import com.spring.util.JNDateUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,20 +72,30 @@ public class TdController {
     public String goNextcurve(HttpServletRequest request) {
         lm.getUserId(request);
         String machineId = request.getParameter("machineId");//焊机id
-        //String machineId = "1148";//焊机id
-        String valuename = request.getParameter("valuename");
+        //String machineId = "1581";//焊机id
+        String valuename = request.getParameter("valuename");//焊机编号
         String type = request.getParameter("type");
         String model = request.getParameter("model");
         String manufacture = request.getParameter("manufacture");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        String starttime = "";
+        String endtime = "";
+        String junctionNo = "";
         //获取本周的数据表名
-        String nowTableName = JNDateUtil.getNowTableName();
+        //String nowTableName = JNDateUtil.getNowTableName();
+        //当天临时表
+        String nowTableName = "tb_temporary";
         //切换数据源
         CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_REALTIME);
         String datetime = df.format(new Date()) + " 00:00:00";//当天时间
-        String starttime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "asc");
-        String endtime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "desc");
-        String junctionNo = tdService.getJunctionIdByRtdata(new BigInteger(machineId), datetime, nowTableName);
+        //String starttime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "asc");
+        //String endtime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "desc");
+        Td byRtdata = tdService.getJunctionIdByRtdata(new BigInteger(machineId), datetime, nowTableName);
+        if (null != byRtdata){
+            starttime = byRtdata.getStartTime();
+            endtime = byRtdata.getEndTime();
+            junctionNo = byRtdata.getFjunction_no();
+        }
         //切换回去
         CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_CIWJN);
         request.setAttribute("machineId", machineId);
@@ -97,7 +106,6 @@ public class TdController {
         request.setAttribute("endtime", endtime);//关机时间
         request.setAttribute("manufacture", manufacture);
         request.setAttribute("junctionNo", junctionNo); //任务编号/名称
-
         return "td/nextCurve";
     }
 
@@ -405,7 +413,7 @@ public class TdController {
         String parentId = request.getParameter("parent");
         parentId = String.valueOf(insm.getUserInsframework());
         BigInteger parent = null;
-        if (iutil.isNull(parentId)) {
+        if (iutil.isNotEmpty(parentId)) {
             parent = new BigInteger(parentId);
         }
         List<Td> getAP = tdService.getAllPosition(parent, null);

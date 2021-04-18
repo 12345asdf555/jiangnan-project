@@ -74,7 +74,7 @@ public class DB_Connectionandroid {
                 Connection connection = null;
                 Statement statement = null;
                 try {
-                    connection = server.dbConnection.getConnection();
+                    connection = MysqlDBConnection.getConnection();
                     statement = connection.createStatement();
                     synchronized (sql) {
                         statement.executeUpdate(sql);
@@ -83,7 +83,7 @@ public class DB_Connectionandroid {
                     e.printStackTrace();
                 } finally {
                     //释放连接，归还资源
-                    server.dbConnection.close(connection, statement, null);
+                    MysqlDBConnection.close(connection, statement, null);
                 }
             }
         }

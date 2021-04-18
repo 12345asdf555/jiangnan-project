@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.Properties;
 
 /**
- * 采用阿里的德鲁伊Druid连接池连接Oracle数据库
+ * 采用阿里的德鲁伊Druid连接池连接mysql数据库
  */
 public class MysqlDBConnection {
     //连接池对象

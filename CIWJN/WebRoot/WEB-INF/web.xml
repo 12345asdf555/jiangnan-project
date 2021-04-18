@@ -61,11 +61,11 @@
   <context-param>
     <param-name>websocket</param-name>
 <!--     <param-value>&quot;ws://192.168.3.36:5556/SerialPortDemo/ws/张三&quot;</param-value> -->
-    <param-value>&quot;10.38.3.30:8083&quot;</param-value>
+    <param-value>&quot;localhost:8083&quot;</param-value>
   </context-param>
   <context-param>
     <param-name>ipurl</param-name>
-    <param-value>http://10.38.3.30:8080/</param-value>
+    <param-value>http://localhost:8080/</param-value>
   </context-param>
   <welcome-file-list>
     <welcome-file>/index.jsp</welcome-file>

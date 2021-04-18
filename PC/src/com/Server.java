@@ -48,7 +48,7 @@ public class Server {
     public static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
     public static final String ipConfigPath = "PC/IPconfig.txt";
-    //public static final String ipConfigPath = "IPconfig.txt";
+//    public static final String ipConfigPath = "IPconfig.txt";
 
     public Server() {
         //定时线程和一些定时任务处理
@@ -137,7 +137,6 @@ public class Server {
         new Thread(new Runnable() {
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
             final EventLoopGroup workerGroup = new NioEventLoopGroup();
-
             @Override
             public void run() {
                 try {

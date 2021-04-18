@@ -1,12 +1,10 @@
 package com.spring.util;
 
+import com.spring.model.AuthorityParameter;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
-
-import com.spring.model.AuthorityParameter;
-import com.spring.util.AuthorityHeaderInterceptor;
 
 public class IsnullUtil {
 	/**
@@ -19,6 +17,13 @@ public class IsnullUtil {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean isNotEmpty(String str){
+		if (null != str && !"".equals(str)){
+			return true;
+		}
+		return false;
 	}
 	
 	/**

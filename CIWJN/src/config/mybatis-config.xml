@@ -40,7 +40,7 @@
 		<mapper resource="com/spring/dao/dataMapper.xml" />
 		<mapper resource="com/spring/dao/tdMapper.xml" />
 		<mapper resource="com/spring/dao/personMapper.xml" />
-		<mapper resource="com/spring/dao/AuthorityMapper.xml" />
+		<mapper resource="com/spring/dao/authorityMapper.xml" />
 		<mapper resource="com/spring/dao/resourceMapper.xml" />
 		<mapper resource="com/spring/dao/weldingmachine.xml" />
 		<mapper resource="com/spring/dao/dictionary.xml" />

@@ -24,7 +24,7 @@ public class TaskThread extends Timer {
     private TaskThread timer = null;
     private TaskThread timer2 = null;
     private TaskThread timer3 = null;
-    private static final String connectUrl = "jdbc:mysql://10.38.3.30:3306/ciwjn?user=root&password=123&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+    private static final String connectUrl = "jdbc:mysql://localhost:3306/ciwjn?user=root&password=123&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
     //周期性线程池，处理实时数据分表的创建
     private static final ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
 
@@ -38,7 +38,7 @@ public class TaskThread extends Timer {
         detectionRtdataTable();
         //下周实时数据表的创建
         shardingJdbcMysql();
-        //每天凌晨0点更新实时数据表名
+        //每天凌晨0点更新实时数据表名，并清空临时表数据
         updateRtdataTableName();
         //每小时更新四张数据统计表
         rtDatastatistics();
@@ -80,8 +80,30 @@ public class TaskThread extends Timer {
                 //执行代码
                 System.out.println(sdf.format(System.currentTimeMillis()) + "定时任务：实时数据表名更新：" + getNowTableName());
                 DB_Connectionmysql.inSqlbase = DB_Connectionmysql.insertrtDataSql(getNowTableName());
+                truncateTableByTemporary();
             }
         }, date, PERIOD_DAY);
+    }
+
+    //每天凌晨清空临时表数据
+    private void truncateTableByTemporary(){
+        Connection connection = null;
+        Statement statement = null;
+        String truncateTableSql = "truncate table tb_temporary";
+        try {
+            connection = LiveDataDBConnection.getConnection();
+            statement = connection.createStatement();
+            int i = statement.executeUpdate(truncateTableSql);
+            if (i != 0){
+                System.out.println(sdf.format(System.currentTimeMillis()) + "临时表数据清空成功：" + i);
+            } else {
+                System.out.println(sdf.format(System.currentTimeMillis()) + "临时表数据清空失败：" + i);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            LiveDataDBConnection.close(connection,statement,null);
+        }
     }
 
     /**
