@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+	
+ -->
+<mapper namespace="com.spring.dao.SwipeMapper">
+    <resultMap id="insfrMap" type="com.spring.model.Swipe">
+        <result property="fid" column="fid"></result>
+        <result property="fname" column="fname"></result>
+        <result property="fmanufacturerId" column="fmanufacturer_id"></result>
+        <result property="ftypeId" column="ftype_id"></result>
+        <result property="FCardNUm" column="FCardNUm"></result>
+        <result property="fweldedJunctionNo" column="fno"></result>
+        <result property="foperatetype" column="foperatetype"></result>
+
+        <result property="fequipmentNo" column="fequipment_no"></result>
+        <result property="fmodel" column="fmodel"></result>
+        <result property="finsframeworkId" column="finsframework_id"></result>
+        <result property="fwelderNo" column="fwelder_no"></result>
+        <result property="fweldedJunctionNo" column="fwelded_junction_no"></result>
+        <result property="foperator" column="foperator"></result>
+
+        <result property="fwelderid" column="fwelderid"></result>
+        <result property="fmachineid" column="fmachineid"></result>
+        <result property="ftaskid" column="ftaskid"></result>
+        <result property="foperatetype" column="foperatetype"></result>
+    </resultMap>
+
+    <!--查询区名称-->
+    <select id="areadata" resultMap="insfrMap">
+        SELECT fid,
+               fname
+        from tb_insframework
+        WHERE fparent = 2
+    </select>
+
+    <!--查询组名称-->
+    <select id="groupdata" resultMap="insfrMap">
+        SELECT fid,
+               fname
+        from tb_insframework
+        WHERE fparent = #{groupid}
+    </select>
+
+    <!--查询焊机区组下的焊机-->
+    <select id="machine" parameterType="java.math.BigInteger" resultMap="insfrMap">
+        select
+        tb_welding_machine.fid fid,
+        fequipment_no,
+        finsframework_id,
+        ftype_id,
+        fmanufacturer_id,
+        fname,
+        ftype,
+        fparent
+        from
+        tb_welding_machine
+        LEFT JOIN tb_insframework ON tb_welding_machine.finsframework_id=tb_insframework.fid
+        WHERE 1=1
+        <if test="groupId != null and groupId !=''">
+            AND finsframework_id = #{groupId}
+        </if>
+    </select>
+
+    <!--焊工登录-->
+    <select id="signin" parameterType="String" resultType="java.lang.String">
+        SELECT
+               fid
+        FROM
+             tb_welder
+        WHERE
+              FCardNUm = #{sign}
+    </select>
+
+    <!--任务记录-->
+    <select id="gettask" resultMap="insfrMap">
+        SELECT tb_welded_junction.fid,
+               fwelded_junction_no fno,
+               foperatetype
+        FROM tb_welded_junction
+                 LEFT JOIN tb_taskresult ON tb_welded_junction.fid = ftaskid
+    </select>
+
+    <!--焊机使用信息-->
+    <select id="getmachineinfo" resultMap="insfrMap">
+        SELECT fequipment_no,
+               fmodel,
+               finsframework_id,
+               fwelder_no,
+               fname,
+               fwelded_junction_no,
+               foperator
+        FROM tb_welding_machine
+                 LEFT JOIN tb_welder
+                           ON tb_welding_machine.fgather_id = tb_welder.fid
+                 LEFT JOIN tb_welded_junction ON tb_welder.fid = tb_welded_junction.foperator
+        WHERE tb_welding_machine.fid=#{fequipmentno}
+    </select>
+
+    <!--改变任务列表任务状态-->
+
+    <insert id="addtaskresult" parameterType="com.spring.model.Swipe">
+        insert into tb_taskresult (fwelderid,fmachineid,ftaskid,foperatedate)
+         value (#{fwelderid},#{fmachineid},#{ftaskid},#{foperatedate})
+    </insert>
+
+</mapper>
