@@ -33,7 +33,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript" src="resources/js/getTimeADay.js"></script>
 	<script type="text/javascript" src="resources/js/exporting.js"></script>
 	<script type="text/javascript" src="resources/js/map.js"></script>
-<!-- 	<script type="text/javascript" src="resources/js/td/HistoryCurve.js"></script> -->
+	<!--<script type="text/javascript" src="resources/js/td/HistoryCurve.js"></script> -->
 	<script type="text/javascript" src="resources/js/td/historycurves.js"></script>
 
   </head>

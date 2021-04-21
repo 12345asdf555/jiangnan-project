@@ -13,19 +13,12 @@ import java.util.Date;
 
 public class DB_Connectionmysql {
 
-    public String select;
-    public String datasend = "";
-    public String connet;
     public static ArrayList<String> listarray1 = new ArrayList<String>();
     public static ArrayList<String> listarray2 = new ArrayList<String>();
     public static ArrayList<String> listarray3 = new ArrayList<String>();
 
-    public static Server server;
-    public java.sql.Connection conn = null;
-    public java.sql.Statement stmt = null;
-
-    public int ceng = 0;
-    public int dao = 0;
+    public static int ceng = 0;
+    public static int dao = 0;
     public int weldstatus = 0;
 
     public int work = 1;
@@ -77,18 +70,21 @@ public class DB_Connectionmysql {
         public SqlWorkInsert(String sql) {
             this.sql = sql;
         }
+
         Connection connection = null;
         Statement statement = null;
+
         @Override
         public void run() {
-            synchronized (sql) {
-                if (null != sql && !"".equals(sql)) {
+            if (null != sql && !"".equals(sql)) {
+                synchronized (sql) {
                     try {
                         connection = LiveDataDBConnection.getConnection();
                         statement = connection.createStatement();
-                        statement.execute(sql);
+                        statement.executeUpdate(sql);
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        System.out.println("存入数据库异常：" + e);
                     } finally {
                         //释放连接，归还资源
                         LiveDataDBConnection.close(connection, statement, null);

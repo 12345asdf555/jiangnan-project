@@ -22,12 +22,7 @@ import java.util.Map.Entry;
 @Sharable
 public class NettyServerHandler extends ChannelHandlerAdapter {
 
-    public String ip;
-    public String ip1;
-    public String connet;
-    public java.sql.Statement stmt = null;
-    public java.sql.Connection conn = null;
-    public SocketChannel socketchannel = null;
+    public static SocketChannel socketchannel = null;
     public static ArrayList<String> listarray1 = new ArrayList<String>();
     public static ArrayList<String> listarray2 = new ArrayList<String>();
     public static ArrayList<String> listarray3 = new ArrayList<String>();
@@ -95,11 +90,11 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
                 ResultSet rs = statement.executeQuery(inSql);
                 while (rs.next()) {
                     junction = rs.getString("tb_welded_junction.fwelded_junction_no");
-                    String ceng = Integer.toString(Integer.valueOf(rs.getString("tb_specification.fsolder_layer"), 16));
+                    String ceng = Integer.toString(Integer.valueOf(rs.getString("tb_specification.fsolder_layer"), 16));//焊层
                     if (ceng.length() != 2) {
                         ceng = "0" + ceng;
                     }
-                    String dao = Integer.toString(Integer.valueOf(rs.getString("tb_specification.fweld_bead"), 16));
+                    String dao = Integer.toString(Integer.valueOf(rs.getString("tb_specification.fweld_bead"), 16));//焊道
                     if (dao.length() != 2) {
                         dao = "0" + dao;
                     }
@@ -214,7 +209,7 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
 //            }
         } else {    //处理焊机下发和上传
 //            System.out.println("mqtt.publishMessage:"+str);
-            mqtt.publishMessage("weldmes/upparams", str, 0);
+            MyMqttClient.publishMessage("weldmes/upparams", str, 0);
         }
     }
 

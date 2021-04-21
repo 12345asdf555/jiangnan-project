@@ -308,7 +308,9 @@ public class Websocket {
 
                         strsend = strsend + welderid + weldid + gatherid + junctionid + welderins + junctionins + ins + itemins + weldmodel + status + electricity + voltage + setelectricity + setvoltage + timesql + maxelectricity + minelectricity + maxvoltage + minvoltage + channel + wmaxelectricity + wminelectricity + wmaxvoltage + wminvoltage;
                     }
-                    mqtt.publishMessage("weldmes/rtcdata", strsend, 0);
+                    if (MyMqttClient.mqttClient.isConnected()){
+                        MyMqttClient.publishMessage("weldmes/rtcdata", strsend, 0);
+                    }
                     strsend = "";
                 }
             } else if (str.length() == 124) {  //松下
@@ -558,8 +560,9 @@ public class Websocket {
                     }
 
                     strsendpan = strsendpan + welderid + weldid + gatherid + junctionid + welderins + junctionins + ins + itemins + weldmodel + status + electricity + voltage + setelectricity + setvoltage + timesql + maxelectricity + minelectricity + maxvoltage + minvoltage + channel + wmaxelectricity + wminelectricity + wmaxvoltage + wminvoltage;
-
-                    mqtt.publishMessage("weldmes/rtcdata", strsendpan, 0);
+                    if (MyMqttClient.mqttClient.isConnected()){
+                        MyMqttClient.publishMessage("weldmes/rtcdata", strsendpan, 0);
+                    }
                     strsendpan = "";
                 }
             }

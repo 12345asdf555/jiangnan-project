@@ -70,7 +70,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<input id="machinemodel" type="hidden" value="${model}"/>
 	<input id="manufacture" type="hidden" value="${manufacture}"/>
 	<input name="afresh" id="afresh" type="hidden" value="${afreshLogin}"/>
-	<input name="junctionNo" id="junctionNo" type="hidden" value="${junctionNo}"/>
+	<input name="junctionNo" id="junctionNo" type="hidden"/>
 	<div style="float:left; width:100%;height:30px;background-color: #474960;color:#ffffff;font-size:14px;line-height:30px;">
 		<div style="float:left;">设备运行参数监控</div>
 		<div style="float:right;"><a href="td/AllTd"><img src="resources/images/history.png" style="height:30px;width:40px;padding-top:3px;"></a></div>
@@ -125,11 +125,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<table>
 				<tr>
 					<td>开机时间：</td>
-					<td class="tdinput"><input class="easyui-textbox" id="r1" readonly="readonly" value="${starttime}"/></td>
+					<td class="tdinput"><input class="easyui-textbox" id="r1" readonly="readonly"/></td>
 				</tr>
 				<tr>
 					<td>关机时间：</td>
-					<td class="tdinput"><input class="easyui-textbox" id="r2" readonly="readonly" value="${endtime}"/></td>
+					<td class="tdinput"><input class="easyui-textbox" id="r2" readonly="readonly"/></td>
 				</tr>
 				<tr>
 					<td>焊接时长：</td>

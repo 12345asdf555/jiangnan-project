@@ -21,9 +21,9 @@ var welderList = new Array();
 
 function Junction() {
     setParam();
-    //datagridTable();
-    loadAllInfo();
-    loadDataForES();
+    datagridTable();
+    //loadAllInfo();
+    //loadDataForES();
 }
 
 function loadAllInfo() {
@@ -72,7 +72,6 @@ function loadDataForES() {
                             "fjunction_id": 0
                         }
                     }
-
                 ]
             }
         },
@@ -266,7 +265,7 @@ function datagridTable() {
             field: 'ck',
             checkbox: true
         }, {
-            field: 'key',
+            field: 'weldedJunctionno',
             title: '任务编号',
             width: 100,
             halign: "center",
@@ -284,19 +283,19 @@ function datagridTable() {
             halign: "center",
             align: "left"
         }, {
-            field: 'startTime.value_as_string',
+            field: 'fstartttime',
             title: '开始时间',
             width: 150,
             halign: "center",
             align: "left"
         }, {
-            field: 'endTime',
+            field: 'fendtime',
             title: '终止时间',
             width: 150,
             halign: "center",
             align: "left"
         }, {
-            field: 'doc_count',
+            field: 'fweldingtime',
             title: '焊接时间(h)',
             width: 150,
             halign: "center",
@@ -320,7 +319,8 @@ function datagridTable() {
             loadChart(row);
         },
         onSelect: function (index, row) {
-            loadChart(row);
+            // alert("onSelect");
+            // loadChart(row);
         }
     });
 }
@@ -329,34 +329,33 @@ function loadChart(row) {
     time1 = new Array();
     vol = new Array();
     ele = new Array();
+    //alert("machid:" + row.machid + "--fwelderId:" + row.fwelderId + "--fjunctionId：" + row.fjunctionId);
     document.getElementById("load").style.display = "block";
     var sh = '<div id="show" style="width:150px;" align="center"><img src="resources/images/load1.gif"/>数据加载中，请稍候...</div>';
     $("#bodys").append(sh);
     document.getElementById("show").style.display = "block";
-    //chartStr = "";
     setParam();
     //loadHistoryCurveData(row);
-    // alert("任务编号：" + row.key);
-    // alert("焊机id：" + $("#machineId").val());
-    // alert("焊工编号：" + row.fwelderId.value);
     var query = {
         "query": {
             "bool": {
                 "must": [
-                    {"match": {"fmachine_id": $("#machineId").val()}}
+                    {"match": {"fmachine_id": row.machid}},
+                    {"match": {"fwelder_id": row.fwelderId}},
+                    {"match": {"fjunction_id": row.fjunctionId}}
                 ],
                 "filter": {
                     "range": {
                         "FWeldTime": {
-                            "gte": new Date(row.startTime.value_as_string).toISOString(),
-                            "lte": new Date(row.endTime.value_as_string).toISOString()
+                            "gte": new Date(row.fstartttime).toISOString(),
+                            "lte": new Date(row.fendtime).toISOString()
                         }
                     }
                 }
             }
         },
         "from": 0,
-        "size": 5000,
+        "size": 10000,
         "sort": [
             {
                 "FWeldTime": {
@@ -370,7 +369,7 @@ function loadChart(row) {
         type: 'post',
         contentType: 'application/json',
         crossDomain: true,
-        async: false,
+        async: true,
         data: JSON.stringify(query),
         dataType: 'json',
         processData: false,
@@ -388,7 +387,7 @@ function loadChart(row) {
         },
         error: function (xhr, message, error) {
             console.log(message);
-            throw (error);
+            alert("查询es数据异常！" + message);
         }
     });
 }

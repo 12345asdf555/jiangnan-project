@@ -109,9 +109,10 @@ $(function () {
             alert("数据请求失败，请联系系统管理员!");
         }
     });
+    //查询任务信息
     $.ajax({
         type: "post",
-        async: false,
+        async: true,
         url: "weldtask/getWeldTask",
         data: {},
         dataType: "json", //返回数据形式为json
@@ -124,53 +125,29 @@ $(function () {
             alert("数据请求失败，请联系系统管理员!");
         }
     });
-
-    /*		$.ajax({
-                  type : "post",
-                  async : false,
-                  url : "wps/Spe?machine="+document.getElementById("in2")+"&chanel="+"",
-                  data : {},
-                  dataType : "json", //返回数据形式为json
-                  success : function(result) {
-                      if (result) {
-                        tongdao = eval(result.rows);
-                        }else{
-                            alert("未查询到相关数据，请尝试索取保存。");
-                        }
-                  },
-                  error : function(errorMsg) {
-                      alert("数据请求失败，请联系系统管理员!");
-                  }
-             });*/
-//	websocket();
-
-    //获取工作、焊接时间以及设备类型
-//	$.ajax({
-//		type : "post",
-//		async : false,
-//		url : "td/getLiveTime?machineid="+$("#machineid").val(),
-//		data : {},
-//		dataType : "json", //返回数据形式为json  
-//		success : function(result) {
-//			if (result) {
-//				worktime = eval(result);
-//				if(worktime.worktime!=null && worktime.worktime!=''){
-//					time1 = worktime.time;
-//				}
-//				if(worktime.time!=null && worktime.time!=''){
-//					time2 = worktime.worktime;
-//				}
-//				/*var t1 = secondToDate(time2);
-//				$("#r3").html(t1);*/
-//			   // $("#r3").textbox('setValue',t1);
-//			    var t2 = secondToDate(time1);
-//			    $("#r4").html(t2);
-//			}
-//		},
-//		error : function(errorMsg) {
-//			alert("数据请求失败，请联系系统管理员!");
-//		}
-//	});
+    //查询开关机时间和焊接时长
+    $.ajax({
+        type: "post",
+        async: true,
+        url: "td/findWeldTimeInfo",
+        data: {
+            machineId: $("#machineid").val()
+        },
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result){
+                $("#r1").textbox('setValue', result.starttime);
+                $("#r2").textbox('setValue', result.endtime);
+                $("#junctionNo").val(result.junctionNo);
+                time2 = time2 + Number(result.worktime);
+                var t2 = secondToDate(time2);
+                $("#r4").textbox('setValue', t2);
+            }
+        },
+        error: function (errorMsg) {
+            alert("数据请求失败，请联系系统管理员!");
+        }
+    });
     $("#l3").html($("#junctionNo").val());
     mqttTest();
     setInterval("serach()", 60000);// 注意函数名没有引号和括弧！

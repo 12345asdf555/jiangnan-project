@@ -3,46 +3,17 @@ package com;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-
 public class MyMqttClient {
-    public static MqttClient mqttClient = null;
+    public static MqttClient mqttClient;
     private static MemoryPersistence memoryPersistence = null;
     private static MqttConnectOptions mqttConnectOptions = null;
-    private String ip;
-    private String ip1;
     public MqttReceriveCallback mqttReceriveCallback = new MqttReceriveCallback();
+    private static final String mqttServerHost = "localhost";
 
     /*
      * static { init("MQTT_FX_Client"); }
      */
     public void init(String clientId) {
-        try {
-            File file = new File(Server.ipConfigPath);
-            String filePath = file.getCanonicalPath();
-            FileInputStream in = new FileInputStream(filePath);
-            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
-            BufferedReader bufReader = new BufferedReader(inReader);
-            String line = null;
-            int writetime = 0;
-
-            while ((line = bufReader.readLine()) != null) {
-                if (writetime == 0) {
-                    ip = line;
-                    writetime++;
-                } else {
-                    ip1 = line;
-                    writetime = 0;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String[] values = ip.split(",");
-
         //鍒濆鍖栬繛鎺ヨ缃璞�
         mqttConnectOptions = new MqttConnectOptions();
         //鍒濆鍖朚qttClient
@@ -54,8 +25,7 @@ public class MyMqttClient {
             try {
                 memoryPersistence = new MemoryPersistence();
                 if (null != memoryPersistence && null != clientId) {
-                    mqttClient = new MqttClient("tcp://" + values[0] + ":1883", clientId, memoryPersistence);
-                    //mqttClient = new MqttClient("tcp://192.168.8.155:1883", clientId,memoryPersistence);
+                    mqttClient = new MqttClient("tcp://" + mqttServerHost + ":1883", clientId, memoryPersistence);
                 }
             } catch (MqttException e) {
                 e.printStackTrace();
@@ -116,7 +86,7 @@ public class MyMqttClient {
     }
 
     // 发布主题和消息内容
-    public void publishMessage(String pubTopic, String message, int qos) {
+    public static void publishMessage(String pubTopic, String message, int qos) {
         if (null != mqttClient && mqttClient.isConnected()) {
             MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(qos);

@@ -17,7 +17,6 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import io.netty.util.CharsetUtil;
 
 import java.io.*;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,8 +25,6 @@ import java.util.concurrent.Executors;
 public class Server {
 
     public MyMqttClient mqtt = new MyMqttClient();
-    public static String ip = null;
-    public static String ip1 = null;
     public static String connet1 = "jdbc:mysql://";
     public static String connet2 = ":3306/";
     public static String connet3 = "?user=";
@@ -38,17 +35,14 @@ public class Server {
     public static ArrayList<String> listarray1 = new ArrayList<String>();
     public static ArrayList<String> listarray2 = new ArrayList<String>();
     public static ArrayList<String> listarray3 = new ArrayList<String>();
-    public Client client = new Client(this);
     public NettyServerHandler nettyServerHandler = new NettyServerHandler();
-    public java.sql.Connection conn = null;
-    public java.sql.Statement stmt = null;
     public static MysqlDBConnection dbConnection = new MysqlDBConnection();
     public static LiveDataDBConnection liveDataDBConnection = new LiveDataDBConnection();
     //创建缓存线程池，处理PC实时数据
     public static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
-    public static final String ipConfigPath = "PC/IPconfig.txt";
-//    public static final String ipConfigPath = "IPconfig.txt";
+    //public static final String ipConfigPath = "PC/IPconfig.txt";
+    //public static final String ipConfigPath = "IPconfig.txt";
 
     public Server() {
         //定时线程和一些定时任务处理
@@ -63,56 +57,29 @@ public class Server {
 
     private void scheduleWorkStart() {
         //读取IPconfig配置文件获取ip地址和数据库配置
-        try {
-            File file = new File(ipConfigPath);
-            String filePath = file.getCanonicalPath();
-            FileInputStream in = new FileInputStream(filePath);
-            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
-            BufferedReader bufReader = new BufferedReader(inReader);
-            String line = null;
-            int writetime = 0;
-            while ((line = bufReader.readLine()) != null) {
-                if (writetime == 0) {
-                    ip = line;
-                    writetime++;
-                } else {
-                    ip1 = line;
-                    writetime = 0;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String[] values = ip.split(",");
-
-        connet = connet1 + values[0] + connet2 + values[1] + connet3 + values[2] + connet4 + values[3] + connet5;
-
-        nettyServerHandler.ip = ip;
-        nettyServerHandler.ip1 = ip1;
-        nettyServerHandler.connet = connet;
-        client.handler.connet = connet;
-
-        //连接数据库
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(connet);
-            stmt = conn.createStatement();
-            client.handler.conn = conn;
-            client.handler.stmt = stmt;
-            NettyServerHandler.mysql.db.conn = conn;
-            NettyServerHandler.mysql.db.stmt = stmt;
-            NettyServerHandler.android.db.conn = conn;
-            NettyServerHandler.android.db.stmt = stmt;
-            NettyServerHandler.mysql.db.connet = connet;
-            NettyServerHandler.android.db.connet = connet;
-
-        } catch (Exception e) {
-            System.out.println("数据库连接异常：" + e);
-        }
+//        try {
+//            File file = new File(ipConfigPath);
+//            String filePath = file.getCanonicalPath();
+//            FileInputStream in = new FileInputStream(filePath);
+//            InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
+//            BufferedReader bufReader = new BufferedReader(inReader);
+//            String line = null;
+//            int writetime = 0;
+//            while ((line = bufReader.readLine()) != null) {
+//                if (writetime == 0) {
+//                    ip = line;
+//                    writetime++;
+//                } else {
+//                    ip1 = line;
+//                    writetime = 0;
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         //获取最新焊口和焊机统计时间
-        check = new DB_Connectioncode(stmt, conn, connet);
+        check = new DB_Connectioncode();
 
         listarray1 = check.getId1();
         listarray2 = check.getId2();
@@ -137,6 +104,7 @@ public class Server {
         new Thread(new Runnable() {
             final EventLoopGroup bossGroup = new NioEventLoopGroup();
             final EventLoopGroup workerGroup = new NioEventLoopGroup();
+
             @Override
             public void run() {
                 try {
@@ -181,8 +149,7 @@ public class Server {
             @Override
             public void run() {
                 mqtt.init("mqttclient");
-                NettyServerHandler.mqtt = mqtt;
-                Websocket.mqtt = mqtt;
+                //订阅下发消息主题
                 mqtt.subTopic("weldmes/downparams");
             }
         }).start();
@@ -192,9 +159,7 @@ public class Server {
     public Runnable sockettran = new Runnable() {
         @Override
         public void run() {
-            if (ip1 != null) {
-                client.run();
-            }
+            Client.run();
         }
     };
 

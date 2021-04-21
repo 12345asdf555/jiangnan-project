@@ -19,7 +19,7 @@ public interface TdService {
 	long findInsid(String insname);
 	long findIns(long uid);
 	String findPosition(String equip);
-	List<Td> allWeldname(String str);
+	List<Td> allWeldname(BigInteger str);
 	List<Td> getAllMachine(String ins);
 	
 	/**

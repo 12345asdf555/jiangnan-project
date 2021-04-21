@@ -448,6 +448,7 @@ public class WeldedJunctionControll {
                 json.put("fweldingtime", new DecimalFormat("0.0000").format((float) Integer.parseInt(w.getCounts().toString()) / 3600));//焊接时间（小时）
                 //json.put("id", w.getId());
                 json.put("machid", w.getMachid());//焊机id
+                json.put("fwelderId", w.getFwelderId());//焊工id
                 json.put("fjunctionId", w.getFjunctionId());//任务id
                 if (w.getMachid() != null && (!w.getMachid().equals(BigInteger.ZERO))) {
                     if (null != machineList && machineList.size() > 0) {

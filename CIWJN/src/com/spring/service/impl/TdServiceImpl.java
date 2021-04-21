@@ -61,7 +61,7 @@ public class TdServiceImpl implements TdService {
         return mapper.findPosition(equip);
     }
 
-    public List<Td> allWeldname(String str) {
+    public List<Td> allWeldname(BigInteger str) {
         return mapper.allWeldname(str);
     }
 

@@ -84,7 +84,7 @@
         </if>
     </select>
 
-    <select id="allWeldname" parameterType="String" resultType="Td">
+    <select id="allWeldname" parameterType="java.math.BigInteger" resultType="Td">
         select w.fid id,w.fname,fwelder_no fwelder_no from tb_welder w
         LEFT JOIN tb_insframework i ON w.Fowner = i.fid
         LEFT JOIN tb_insframework ins on ins.fid = i.fparent
@@ -96,13 +96,10 @@
     </select>
 
     <select id="getLiveTime" resultType="Td">
-        select sum(wtime) worktime, time
-        from (
-            SELECT count (fid) wtime, count (fid) time from tb_live_data
-            where FWeldTime &gt;= #{time} and FWeldTime &lt; date_sub(date_sub(#{time}, interval -1 day), interval 0 minute) and fmachine_id=#{machineid} and fstatus!=0
-            UNION ALL
-            SELECT count (fid) wtime, 0 time from tb_live_data
-            where FWeldTime &gt;= #{time} and FWeldTime &lt; date_sub(date_sub(#{time}, interval -1 day), interval 0 minute) and fmachine_id=#{machineid} and fstatus=0) temp
+        SELECT count(FWeldTime) worktime
+        FROM tb_temporary
+        WHERE FWeldTime >= #{startTime}
+          AND fstatus != 0 AND fmachine_id = #{machineId}
     </select>
 
     <select id="getBootTime" resultType="String">

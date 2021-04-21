@@ -59,13 +59,14 @@ public class WeldedJunctionServiceImpl implements WeldedJunctionService{
 		 */
 		List<WeldedJunction> list = new ArrayList<>();
 		List<WeldedJunction> jmByWelder = null;
+		List<String> tableList = null;
 		PageHelper.startPage(page.getPageIndex(), page.getPageSize());
 		try {
 			if (dto != null && dto.getDtoTime1() != null && dto.getDtoTime2() != null){
-				List<String> tableList = JNDateUtil.getRtDataTableList(dto.getDtoTime1(), dto.getDtoTime2());
-				if (null != tableList && tableList.size() > 0){
+				tableList = JNDateUtil.getRtDataTableList(dto.getDtoTime1(), dto.getDtoTime2());
+				if (tableList.size() > 0){
 					for (String tableName : tableList) {
-						if (null != tableName && tableName != ""){
+						if (null != tableName && !tableName.equals("")){
 							dto.setRtDataTableName(tableName);
 							jmByWelder = wjm.getJMByWelder(dto, welderNo);
 							if (null != jmByWelder && jmByWelder.size() > 0){

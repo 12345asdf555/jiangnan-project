@@ -193,7 +193,7 @@ function CompanyEfficiencyDatagrid(){
 			width : 150,
 			halign : "center",
 			align : "left"
-		}] ],
+		}]],
 		rowStyler: function(index,row){
             if ((index % 2)!=0){
             	//处理行代背景色后无法选中

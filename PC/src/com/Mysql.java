@@ -3,6 +3,7 @@ package com;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -14,6 +15,8 @@ public class Mysql {
     public ArrayList<String> listarray2;
     public ArrayList<String> listarray3;
     public DB_Connectionmysql db;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdftime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Mysql() {
         db = new DB_Connectionmysql();
@@ -42,39 +45,45 @@ public class Mysql {
                 long itemid = 0;
 
                 if (isInteger(str.substring(34, 38))) {
-                    welderid = Integer.valueOf(str.substring(34, 38));
+                    welderid = Integer.parseInt(str.substring(34, 38));
                 }
                 if (isInteger(str.substring(18, 22))) {
-                    weldid = Integer.valueOf(str.substring(18, 22));
+                    weldid = Integer.parseInt(str.substring(18, 22));
                 }
                 if (isInteger(str.substring(14, 18))) {
-                    gatherid = Integer.valueOf(str.substring(14, 18));
+                    gatherid = Integer.parseInt(str.substring(14, 18));
                 }
 
                 if (isInteger(str.substring(232, 234))){
-                    itemid = Integer.valueOf(str.substring(232, 234));
+                    itemid = Integer.parseInt(str.substring(232, 234));
                 }
-                String weldmodel = Integer.valueOf(str.subSequence(12, 14).toString(), 16).toString();
+                String weldmodel = Integer.valueOf(str.substring(12, 14), 16).toString();
+                String nowdatetime = sdf.format(System.currentTimeMillis());//当前系统时间
                 for (int a = 0; a < 161; a += 80) {
-                    int status = Integer.parseInt(str.subSequence(78 + a, 80 + a).toString(), 16);
-                    BigDecimal fwirefeedrate = new BigDecimal(Integer.valueOf(str.subSequence(58 + a, 62 + a).toString(), 16));
-                    String year = Integer.valueOf(str.subSequence(38 + a, 40 + a).toString(), 16).toString();
-                    String month = Integer.valueOf(str.subSequence(40 + a, 42 + a).toString(), 16).toString();
-                    String day = Integer.valueOf(str.subSequence(42 + a, 44 + a).toString(), 16).toString();
-                    String hour = Integer.valueOf(str.subSequence(44 + a, 46 + a).toString(), 16).toString();
-                    String minute = Integer.valueOf(str.subSequence(46 + a, 48 + a).toString(), 16).toString();
-                    String second = Integer.valueOf(str.subSequence(48 + a, 50 + a).toString(), 16).toString();
+                    int status = Integer.parseInt(str.substring(78 + a, 80 + a), 16);
+                    BigDecimal fwirefeedrate = new BigDecimal(Integer.valueOf(str.substring(58 + a, 62 + a), 16));
+                    String year = Integer.valueOf(str.substring(38 + a, 40 + a), 16).toString();
+                    String month = Integer.valueOf(str.substring(40 + a, 42 + a), 16).toString();
+                    String day = Integer.valueOf(str.substring(42 + a, 44 + a), 16).toString();
+                    String hour = Integer.valueOf(str.substring(44 + a, 46 + a), 16).toString();
+                    String minute = Integer.valueOf(str.substring(46 + a, 48 + a), 16).toString();
+                    String second = Integer.valueOf(str.substring(48 + a, 50 + a), 16).toString();
                     String strdate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
                     try {
                         time = DateTools.parse("yy-MM-dd HH:mm:ss", strdate);
                         timesql = new Timestamp(time.getTime());
+
+                        //焊机日期与系统日期不一致，修改为系统时间[具体到天]
+                        if (!nowdatetime.equals(timesql.toString().substring(0,10))){
+                            timesql = Timestamp.valueOf(sdftime.format(System.currentTimeMillis()));
+                        }
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
 
-                    BigDecimal electricity = new BigDecimal(Integer.valueOf(str.subSequence(50 + a, 54 + a).toString(), 16));
-                    BigDecimal voltage = new BigDecimal(Integer.valueOf(str.subSequence(54 + a, 58 + a).toString(), 16));
-                    int channel = Integer.valueOf(str.subSequence(100 + a, 102 + a).toString(), 16);
+                    BigDecimal electricity = new BigDecimal(Integer.valueOf(str.substring(50 + a, 54 + a).toString(), 16));
+                    BigDecimal voltage = new BigDecimal(Integer.valueOf(str.substring(54 + a, 58 + a).toString(), 16));
+                    int channel = Integer.valueOf(str.substring(100 + a, 102 + a).toString(), 16);
                     //焊接电流电压上下限
                     BigDecimal maxelectricity = new BigDecimal((Integer.valueOf(str.subSequence(84 + a, 88 + a).toString(), 16).intValue()) + (Integer.valueOf(str.subSequence(92 + a, 94 + a).toString(), 16).intValue()));
                     BigDecimal minelectricity = null;
@@ -134,13 +143,17 @@ public class Mysql {
                 String minute = Integer.valueOf(str.subSequence(46, 48).toString(), 16).toString();
                 String second = Integer.valueOf(str.subSequence(48, 50).toString(), 16).toString();
                 String strdate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-
+                String nowdatetime = sdf.format(System.currentTimeMillis());//当前系统时间
                 try {
                     time = DateTools.parse("yy-MM-dd HH:mm:ss", strdate);
                     timesql = new Timestamp(time.getTime());
+
+                    //焊机日期与系统日期不一致，修改为系统时间[具体到天]
+                    if (!nowdatetime.equals(timesql.toString().substring(0,10))){
+                        timesql = Timestamp.valueOf(sdftime.format(System.currentTimeMillis()));
+                    }
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
 
                 int channel = Integer.valueOf(str.subSequence(100, 102).toString(), 16);

@@ -356,7 +356,7 @@ public class TaskThread extends Timer {
                 try {
                     conn = MysqlDBConnection.getConnection();
                     stmt = conn.createStatement();
-                    DB_Connectioncode check = new DB_Connectioncode(stmt, conn, connectUrl);
+                    DB_Connectioncode check = new DB_Connectioncode();
 
                     ArrayList<String> listarray1 = check.getId1();
                     ArrayList<String> listarray2 = check.getId2();
@@ -505,7 +505,11 @@ public class TaskThread extends Timer {
                             "fsolder_layer int DEFAULT NULL COMMENT '焊道号'," +
                             "fweld_bead int DEFAULT NULL COMMENT '焊层号'," +
                             "PRIMARY KEY (fid) USING BTREE," +
-                            "KEY FweldTime (FWeldTime) USING BTREE" +
+                            "KEY FweldTime (FWeldTime) USING BTREE," +
+                            "KEY fwelder_id (fwelder_id) USING BTREE," +
+                            "KEY fmachine_id (fmachine_id) USING BTREE," +
+                            "KEY fjunction_id (fjunction_id) USING BTREE," +
+                            "KEY fstatus (fstatus) USING BTREE" +
                             ") ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;");
                 } else {
                     System.out.println("tableName:" + tableName + ":存在");

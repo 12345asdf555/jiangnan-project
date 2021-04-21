@@ -68,6 +68,43 @@ public class TdController {
         return "td/newCurve";
     }
 
+    @RequestMapping("/findWeldTimeInfo")
+    @ResponseBody
+    public String findWeldTimeInfo(HttpServletRequest request) {
+        String machineId = request.getParameter("machineId");//焊机id
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        String starttime = "";
+        String endtime = "";
+        String junctionNo = "";
+        double worktime = 0;
+        //获取本周的数据表名
+        //String nowTableName = JNDateUtil.getNowTableName();
+        //当天临时表
+        String nowTableName = "tb_temporary";
+        //切换数据源
+        CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_REALTIME);
+        String datetime = df.format(new Date()) + " 00:00:00";//当天时间
+        Td byRtdata = tdService.getJunctionIdByRtdata(new BigInteger(machineId), datetime, nowTableName);
+        if (null != byRtdata) {
+            starttime = byRtdata.getStartTime();
+            endtime = byRtdata.getEndTime();
+            junctionNo = byRtdata.getFjunction_no();
+        }
+        //查询当天的焊接时长
+        Td liveTime = tdService.getLiveTime(datetime, BigInteger.valueOf(Long.parseLong(machineId)));
+        if (null != liveTime) {
+            worktime = liveTime.getWorktime();
+        }
+        //切换回去
+        CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_CIWJN);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("starttime", starttime);
+        jsonObject.put("endtime", endtime);
+        jsonObject.put("junctionNo", junctionNo);
+        jsonObject.put("worktime", worktime);
+        return jsonObject.toString();
+    }
+
     @RequestMapping("/goNextcurve")
     public String goNextcurve(HttpServletRequest request) {
         lm.getUserId(request);
@@ -77,35 +114,14 @@ public class TdController {
         String type = request.getParameter("type");
         String model = request.getParameter("model");
         String manufacture = request.getParameter("manufacture");
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
-        String starttime = "";
-        String endtime = "";
-        String junctionNo = "";
-        //获取本周的数据表名
-        //String nowTableName = JNDateUtil.getNowTableName();
-        //当天临时表
-        String nowTableName = "tb_temporary";
-        //切换数据源
-        CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_REALTIME);
-        String datetime = df.format(new Date()) + " 00:00:00";//当天时间
-        //String starttime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "asc");
-        //String endtime = tdService.getBootTime(datetime, new BigInteger(machineId), nowTableName, "desc");
-        Td byRtdata = tdService.getJunctionIdByRtdata(new BigInteger(machineId), datetime, nowTableName);
-        if (null != byRtdata){
-            starttime = byRtdata.getStartTime();
-            endtime = byRtdata.getEndTime();
-            junctionNo = byRtdata.getFjunction_no();
-        }
-        //切换回去
-        CustomerContextHolder.setCustomerType(CustomerContextHolder.DATASOURCE_CIWJN);
         request.setAttribute("machineId", machineId);
         request.setAttribute("valuename", valuename);
         request.setAttribute("type", type);
         request.setAttribute("model", model);
-        request.setAttribute("starttime", starttime);//开机时间
-        request.setAttribute("endtime", endtime);//关机时间
+        //request.setAttribute("starttime", starttime);//开机时间
+        //request.setAttribute("endtime", endtime);//关机时间
         request.setAttribute("manufacture", manufacture);
-        request.setAttribute("junctionNo", junctionNo); //任务编号/名称
+        //request.setAttribute("junctionNo", junctionNo); //任务编号/名称
         return "td/nextCurve";
     }
 
@@ -412,7 +428,7 @@ public class TdController {
     public String getAllPosition(HttpServletRequest request) {
         String parentId = request.getParameter("parent");
         parentId = String.valueOf(insm.getUserInsframework());
-        BigInteger parent = null;
+        BigInteger parent = BigInteger.ZERO;
         if (iutil.isNotEmpty(parentId)) {
             parent = new BigInteger(parentId);
         }
@@ -584,8 +600,11 @@ public class TdController {
     @RequestMapping("/allWeldname")
     @ResponseBody
     public String allWeldname(HttpServletRequest request) {
-
-        String parentId = String.valueOf(insm.getUserInsframework());
+        String parentid = String.valueOf(insm.getUserInsframework());
+        BigInteger parentId = BigInteger.ZERO;
+        if (null != parentid && !"".equals(parentid)){
+            parentId = BigInteger.valueOf(Long.parseLong(parentid));
+        }
         List<Td> fwn = tdService.allWeldname(parentId);
         JSONObject obj = new JSONObject();
         JSONObject json = new JSONObject();
@@ -631,7 +650,7 @@ public class TdController {
                 ary.add(json);
             }
         } catch (Exception e) {
-            e.getMessage();
+            e.printStackTrace();
         }
         obj.put("rows", ary);
         return obj.toString();
