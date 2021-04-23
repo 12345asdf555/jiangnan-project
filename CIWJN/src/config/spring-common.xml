@@ -27,7 +27,7 @@
         <property name="url"
                   value="jdbc:mysql://localhost:3306/ciwjn?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3&amp;serverTimezone=UTC"/>
         <property name="username" value="root"/>
-        <property name="password" value="123"/>
+        <property name="password" value="123456"/>
     </bean>
 
     <!-- 1.2 数据源 : DriverManagerDataSource -->
@@ -37,7 +37,7 @@
         <property name="url"
                   value="jdbc:mysql://localhost:3306/realtimedata?allowMultiQueries=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;maxReconnects=3&amp;serverTimezone=UTC"/>
         <property name="username" value="root"/>
-        <property name="password" value="123"/>
+        <property name="password" value="123456"/>
     </bean>
 
     <!--动态数据源的配置-->

@@ -56,12 +56,13 @@ public class NettyServerHandler extends ChannelHandlerAdapter {
 
     private void workSpace(String str) {
         String socketfail = "";
-        if ("7E".equals(str.substring(0, 2)) && ("22".equals(str.substring(10, 12))) && (str.length() == 284 || str.length() == 124)) {
-            //数据存入数据库
-            mysql.Mysqlbase(str);
-            //发送前端
-            websocket.Websocketbase(str, listarray2, listarray3, websocketlist);
-
+        if (str.length() == 284 || str.length() == 124) {
+            if ("7E".equals(str.substring(0, 2)) && "22".equals(str.substring(10, 12))){
+                //数据存入数据库
+                mysql.Mysqlbase(str);
+                //发送前端
+                websocket.Websocketbase(str, listarray2, listarray3, websocketlist);
+            }
         } else if ("FA".equals(str.substring(0, 2)) && str.length() == 110) {  //处理实时数据
 //            mysql.Mysqlrun(str);
 //            websocket.Websocketrun(str, listarray2, listarray3, websocketlist);
