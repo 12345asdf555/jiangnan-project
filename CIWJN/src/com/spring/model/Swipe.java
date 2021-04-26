@@ -20,11 +20,12 @@ public class Swipe {
     private BigInteger ftaskid;
     private BigInteger fwelderid;
     private BigInteger fmachineid;
-
-
-
-
     private String foperatedate;
+
+    private String fback;
+    private String ftypeid;
+    private String fvaluename;
+    private BigInteger fposition;
 
     public String getFoperatedate() {
         return foperatedate;
@@ -33,14 +34,6 @@ public class Swipe {
     public void setFoperatedate(String foperatedate) {
         this.foperatedate = foperatedate;
     }
-
-
-
-
-
-
-
-
 
     public String getFCardNUm() {
         return FCardNUm;
@@ -162,5 +155,37 @@ public class Swipe {
 
     public void setFmachineid(BigInteger fmachineid) {
         this.fmachineid = fmachineid;
+    }
+
+    public String getFback() {
+        return fback;
+    }
+
+    public void setFback(String fback) {
+        this.fback = fback;
+    }
+
+    public String getFtypeid() {
+        return ftypeid;
+    }
+
+    public void setFtypeid(String ftypeid) {
+        this.ftypeid = ftypeid;
+    }
+
+    public String getFvaluename() {
+        return fvaluename;
+    }
+
+    public void setFvaluename(String fvaluename) {
+        this.fvaluename = fvaluename;
+    }
+
+    public BigInteger getFposition() {
+        return fposition;
+    }
+
+    public void setFposition(BigInteger fposition) {
+        this.fposition = fposition;
     }
 }

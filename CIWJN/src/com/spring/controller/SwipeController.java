@@ -36,8 +36,8 @@ public class SwipeController {
         JSONObject obj = new JSONObject();
 
         for (Swipe insfr : area) {
-            json.put("id", insfr.getFid());
-            json.put("name", insfr.getFname());
+            json.put("name", insfr.getFback());
+            json.put("id",insfr.getFtypeid());
             array.add(json);
         }
         obj.put("ary", array);
@@ -58,7 +58,7 @@ public class SwipeController {
         JSONObject obj = new JSONObject();
         for (Swipe insfr : group) {
             json.put("id", insfr.getFid());
-            json.put("name", insfr.getFname());
+            json.put("name", insfr.getFvaluename());
             array.add(json);
         }
         obj.put("ary", array);
@@ -81,6 +81,34 @@ public class SwipeController {
         JSONArray array = new JSONArray();
         JSONObject obj = new JSONObject();
         for (Swipe insfr : machine) {
+            json.put("id", insfr.getFid());
+            json.put("fmanufacturerid", insfr.getFmanufacturerId());
+            json.put("ftypeid", insfr.getFtypeId());
+            json.put("fequipmentNo",insfr.getFequipmentNo());
+            array.add(json);
+        }
+        obj.put("ary", array);
+        return obj.toString();
+    }
+
+
+    //查询次页焊机区组下的未绑定焊机
+    @RequestMapping("/machinec")
+    @ResponseBody
+    public String machinec(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control", "no-cache");
+
+        String groupId = request.getParameter("groupid");
+        BigInteger finsframeworkid = BigInteger.ZERO;
+        if (groupId != null) {
+            finsframeworkid = new BigInteger(groupId);
+        }
+        List<Swipe> machinec = swipeService.machinec(finsframeworkid);
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        JSONObject obj = new JSONObject();
+        for (Swipe insfr : machinec) {
             json.put("id", insfr.getFid());
             json.put("fmanufacturerid", insfr.getFmanufacturerId());
             json.put("ftypeid", insfr.getFtypeId());

@@ -31,6 +31,11 @@ public class SwipeServiceImp implements SwipeService {
     }
 
     @Override
+    public List<Swipe> machinec(BigInteger groupId){
+        return swipeMapper.machinec(groupId);
+    }
+
+    @Override
     public String signin(String sign){
         return swipeMapper.signin(sign);
     }

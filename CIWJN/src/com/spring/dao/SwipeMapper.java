@@ -19,6 +19,9 @@ public interface SwipeMapper extends Mapper<Insframework> {
     /*机器显示信息*/
     public List<Swipe> machine(@Param("groupId") BigInteger groupId);
 
+    /*查询次页焊机区组下的未绑定焊机*/
+    public List<Swipe> machinec(@Param("groupId") BigInteger groupId);
+
     /*焊工登录入口*/
     public String signin(String sign);
 

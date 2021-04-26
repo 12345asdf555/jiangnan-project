@@ -27,25 +27,41 @@
         <result property="fmachineid" column="fmachineid"></result>
         <result property="ftaskid" column="ftaskid"></result>
         <result property="foperatetype" column="foperatetype"></result>
+
+        <result property="fback" column="fback"></result>
+        <result property="ftypeid" column="ftypeid"></result>
+        <result property="fvaluename" column="fvaluename"></result>
+        <result property="fposition" column="fposition"></result>
     </resultMap>
 
     <!--查询区名称-->
-    <select id="areadata" resultMap="insfrMap">
+    <!--<select id="areadata" resultMap="insfrMap">
         SELECT fid,
                fname
         from tb_insframework
         WHERE fparent = 2
-    </select>
+    </select>-->
 
     <!--查询组名称-->
-    <select id="groupdata" resultMap="insfrMap">
+    <!--<select id="groupdata" resultMap="insfrMap">
         SELECT fid,
                fname
         from tb_insframework
         WHERE fparent = #{groupid}
+    </select>-->
+
+    <!--厂房区域一级-->
+    <select id="areadata" resultMap="insfrMap">
+        SELECT fid,fback,ftypeid FROM tb_dictionary WHERE ftypeid in(25,26) GROUP BY ftypeid
     </select>
 
-    <!--查询焊机区组下的焊机-->
+    <!--厂房区域二级-->
+    <select id="groupdata" resultMap="insfrMap" parameterType="java.lang.String">
+        SELECT fid,ftypeid,fvaluename FROM tb_dictionary WHERE ftypeid=#{groupid}
+    </select>
+
+
+    <!--查询首页焊机区组下的焊机-->
     <select id="machine" parameterType="java.math.BigInteger" resultMap="insfrMap">
         select
         tb_welding_machine.fid fid,
@@ -53,15 +69,31 @@
         finsframework_id,
         ftype_id,
         fmanufacturer_id,
-        fname,
-        ftype,
-        fparent
+        fposition
         from
         tb_welding_machine
-        LEFT JOIN tb_insframework ON tb_welding_machine.finsframework_id=tb_insframework.fid
         WHERE 1=1
         <if test="groupId != null and groupId !=''">
-            AND finsframework_id = #{groupId}
+            AND fposition = #{groupId}
+        </if>
+    </select>
+
+    <!--查询次页焊机区组下的未绑定焊机-->
+    <select id="machinec" parameterType="java.math.BigInteger" resultMap="insfrMap">
+        select
+        tb_welding_machine.fid fid,
+        fequipment_no,
+        finsframework_id,
+        ftype_id,
+        fmanufacturer_id,
+        fposition
+        from
+        tb_welding_machine
+        LEFT JOIN tb_taskresult ON tb_welding_machine.fid = tb_taskresult.fmachineid
+        LEFT JOIN tb_welder ON tb_welding_machine.fgather_id = tb_welder.fid
+        WHERE fname IS NULL AND fmachineid IS NULL
+        <if test="groupId != null and groupId !=''">
+            AND fposition = #{groupId}
         </if>
     </select>
 
@@ -80,8 +112,8 @@
         SELECT tb_welded_junction.fid,
                fwelded_junction_no fno,
                foperatetype
-        FROM tb_welded_junction
-                 LEFT JOIN tb_taskresult ON tb_welded_junction.fid = ftaskid
+        FROM tb_welded_junction LEFT JOIN tb_taskresult ON tb_welded_junction.fid = ftaskid
+        GROUP BY tb_welded_junction.fid ORDER BY fstart_time DESC
     </select>
 
     <!--焊机使用信息-->

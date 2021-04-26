@@ -12,6 +12,8 @@ public interface SwipeService {
 
     public List<Swipe> machine(BigInteger groupId);
 
+    public List<Swipe> machinec(BigInteger groupId);
+
     public String signin(String sign);
 
     public List<Swipe> gettask();
